@@ -159,23 +159,36 @@ body {
 .nav-toggle {
     display: none;
     flex-direction: column;
-    gap: 5px;
-    background: none;
-    border: none;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 8px;
     cursor: pointer;
-    padding: 4px;
+    padding: 10px;
     z-index: 1001;
+    transition: background 0.3s;
+}
+
+#navbar.scrolled .nav-toggle {
+    background: rgba(74, 44, 42, 0.08);
+    border-color: rgba(74, 44, 42, 0.15);
 }
 
 .nav-toggle span {
-    width: 24px;
-    height: 2px;
+    width: 26px;
+    height: 2.5px;
+    border-radius: 2px;
     background: var(--white);
     transition: all 0.3s;
 }
 
 #navbar.scrolled .nav-toggle span {
     background: var(--espresso);
+}
+
+.nav-toggle.active span {
+    background: var(--espresso) !important;
 }
 
 .nav-toggle.active span:nth-child(1) {
