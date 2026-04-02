@@ -886,45 +886,80 @@ body {
     letter-spacing: 1px;
 }
 
-.gift-iban {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
+.gift-bank-info {
     background: rgba(0, 0, 0, 0.15);
     border-radius: 12px;
     padding: 20px;
 }
 
-.iban-label {
-    font-size: 0.7rem;
-    letter-spacing: 3px;
+.bank-name {
+    font-size: 0.72rem;
+    letter-spacing: 2px;
     text-transform: uppercase;
     opacity: 0.6;
+    margin-bottom: 14px;
+    text-align: center;
+}
+
+.iban-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.iban-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.12);
+    border-radius: 8px;
+    padding: 10px 14px;
+    transition: background 0.3s;
+}
+
+.iban-row:hover {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.iban-currency {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+    background: rgba(245, 230, 211, 0.15);
+    padding: 4px 10px;
+    border-radius: 4px;
+    min-width: 42px;
+    text-align: center;
+    flex-shrink: 0;
 }
 
 .iban-number {
     font-family: 'Montserrat', sans-serif;
-    font-size: 0.88rem;
-    letter-spacing: 2px;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
     word-break: break-all;
+    flex: 1;
+    opacity: 0.9;
 }
 
 .copy-btn {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 8px 20px;
+    justify-content: center;
+    gap: 4px;
+    padding: 6px 10px;
     font-family: 'Montserrat', sans-serif;
-    font-size: 0.7rem;
-    letter-spacing: 2px;
+    font-size: 0.65rem;
+    letter-spacing: 1px;
     text-transform: uppercase;
     color: var(--champagne);
     background: none;
-    border: 1px solid rgba(245, 230, 211, 0.3);
-    border-radius: 50px;
+    border: 1px solid rgba(245, 230, 211, 0.25);
+    border-radius: 6px;
     cursor: pointer;
     transition: all 0.3s ease;
+    flex-shrink: 0;
 }
 
 .copy-btn:hover {

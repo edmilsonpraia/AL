@@ -155,35 +155,31 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCountdown();
     setInterval(updateCountdown, 1000);
 
-    // ---- Copy IBAN ----
-    const copyBtn = document.getElementById('copyIban');
-    const ibanNumber = document.getElementById('ibanNumber');
-
-    if (copyBtn && ibanNumber) {
-        copyBtn.addEventListener('click', async () => {
+    // ---- Copy IBAN buttons ----
+    document.querySelectorAll('.copy-btn[data-copy]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const iban = btn.dataset.copy;
             try {
-                await navigator.clipboard.writeText(ibanNumber.textContent.trim());
-                copyBtn.classList.add('copied');
-                copyBtn.querySelector('span').textContent = 'Copiado!';
-                setTimeout(() => {
-                    copyBtn.classList.remove('copied');
-                    copyBtn.querySelector('span').textContent = 'Copiar';
-                }, 2000);
+                await navigator.clipboard.writeText(iban);
             } catch {
-                const range = document.createRange();
-                range.selectNodeContents(ibanNumber);
-                const sel = window.getSelection();
-                sel.removeAllRanges();
-                sel.addRange(range);
+                const ta = document.createElement('textarea');
+                ta.value = iban;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
                 document.execCommand('copy');
-                sel.removeAllRanges();
-                copyBtn.querySelector('span').textContent = 'Copiado!';
-                setTimeout(() => {
-                    copyBtn.querySelector('span').textContent = 'Copiar';
-                }, 2000);
+                document.body.removeChild(ta);
             }
+            btn.classList.add('copied');
+            const origHTML = btn.innerHTML;
+            btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+            setTimeout(() => {
+                btn.classList.remove('copied');
+                btn.innerHTML = origHTML;
+            }, 2000);
         });
-    }
+    });
 
     // ---- Confetti Effect ----
     function launchConfetti() {
@@ -265,7 +261,8 @@ document.addEventListener('DOMContentLoaded', () => {
         cerimonia: 'Cerimonia civil as 15:30 seguida do copo d\'agua',
         versiculo: '"Onde voce for, irei; onde voce ficar, ficarei." - Rute 1:16',
         dresscode: 'Traje elegante/formal. As cores do casamento sao Champagne, Mocha Mousse e Espresso (tons terrosos e elegantes).',
-        presentes: 'Ha lista de presentes em loja fisica ou online, ou podem contribuir para a lua de mel por IBAN.',
+        presentes: 'Ha lista de presentes em loja fisica ou online, ou podem contribuir para a lua de mel por IBAN (BFA - Lisandra Patricia da Silva F. de Lemos).',
+        ibans: 'AKZ: AO06 0006 0000 5402865630151 | USD: AO06 0006 0000 5402865631121 | EUR: AO06 0006 0000 5402865631218',
         confirmar: 'Podem confirmar a presenca ate 15 de Julho de 2026, preenchendo o formulario na seccao "Confirmar Presenca" do site.',
         estacionamento: 'O Estaleiro Imbondeiro dispoe de estacionamento para os convidados.',
         criancas: 'Sim, as criancas sao bem-vindas ao casamento!',
@@ -298,7 +295,8 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         {
             keywords: ['iban', 'transferencia', 'contribui', 'dinheiro', 'lua de mel', 'honeymoon'],
-            reply: () => `Podem contribuir para a lua de mel dos noivos por transferencia bancaria. O IBAN esta disponivel na seccao "Presentes" do site. Muito obrigado pela generosidade!`
+            reply: () => `Podem contribuir para a lua de mel por transferencia BFA (Lisandra Patricia da Silva F. de Lemos):\n\n` +
+                `AKZ: AO06 0006 0000 5402865630151\nUSD: AO06 0006 0000 5402865631121\nEUR: AO06 0006 0000 5402865631218\n\nTambem pode copiar os IBANs na seccao "Presentes" do site!`
         },
         {
             keywords: ['confirmar', 'confirmacao', 'rsvp', 'presenca'],
