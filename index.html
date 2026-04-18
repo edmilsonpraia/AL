@@ -80,6 +80,7 @@
                 <li><a href="#cerimonia">Cerimónia</a></li>
                 <li><a href="#contagem">Contagem</a></li>
                 <li><a href="#presentes">Presentes</a></li>
+                <li><a href="#sugestoes">Menu</a></li>
                 <li><a href="#confirmar">Confirmar</a></li>
             </ul>
         </div>
@@ -347,6 +348,74 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sugestões Menu -->
+    <section id="sugestoes" class="section suggestions-section">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">Ajudem-nos a escolher</span>
+                <h2>O Menu do Grande Dia</h2>
+                <div class="ornament">
+                    <div class="ornament-line"></div>
+                    <svg class="ornament-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                    <div class="ornament-line"></div>
+                </div>
+            </div>
+            <p class="suggestions-intro reveal">Gostaríamos de contar com a vossa ajuda! Sugiram pratos, sobremesas e bebidas que gostariam de ver no nosso copo d'água.</p>
+            <form class="suggestions-form reveal" id="suggestionsForm">
+                <div class="suggestions-grid">
+                    <div class="suggestion-group">
+                        <div class="sg-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M3 6h18M3 6v14a2 2 0 002 2h14a2 2 0 002-2V6M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                                <path d="M12 11v6M9 14h6"/>
+                            </svg>
+                        </div>
+                        <label>Pratos / Comidas</label>
+                        <textarea id="sugPratos" placeholder="Ex: Muamba de galinha, Arroz de marisco, Cabrito assado..." rows="3"></textarea>
+                    </div>
+                    <div class="suggestion-group">
+                        <div class="sg-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M8 2h8l2 6H6l2-6zM6 8v1a6 6 0 0012 0V8"/>
+                                <path d="M12 15v4M8 19h8"/>
+                            </svg>
+                        </div>
+                        <label>Sobremesas</label>
+                        <textarea id="sugSobremesas" placeholder="Ex: Cocada, Pudim, Bolo de chocolate..." rows="3"></textarea>
+                    </div>
+                    <div class="suggestion-group">
+                        <div class="sg-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M17 8h1a4 4 0 110 8h-1M3 8h14v9a4 4 0 01-4 4H7a4 4 0 01-4-4V8z"/>
+                                <path d="M6 1v3M10 1v3M14 1v3"/>
+                            </svg>
+                        </div>
+                        <label>Bebidas</label>
+                        <textarea id="sugBebidas" placeholder="Ex: Sangria, Sumo de maracujá, Cocktails..." rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="suggestion-name-row">
+                    <input type="text" id="sugNome" placeholder="O seu nome (opcional)">
+                    <button type="submit" class="suggestion-submit-btn">
+                        Enviar Sugestões
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                        </svg>
+                    </button>
+                </div>
+            </form>
+            <div class="suggestion-success" id="suggestionSuccess" style="display:none;">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+                <h3>Obrigado pelas sugestões!</h3>
+                <p>Os noivos vão adorar as vossas ideias.</p>
             </div>
         </div>
     </section>

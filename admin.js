@@ -86,6 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadRecentList(rsvps);
         loadGuestsTable(rsvps);
         loadMessages(rsvps);
+        loadSuggestions();
         loadMenuItems();
     }
 
@@ -247,6 +248,43 @@ document.addEventListener('DOMContentLoaded', () => {
         `).join('');
     }
 
+    // ---- Suggestions ----
+    function loadSuggestions() {
+        const suggestions = JSON.parse(localStorage.getItem('wedding_suggestions') || '[]');
+        const container = document.getElementById('suggestionsAdminList');
+        const statEl = document.getElementById('statSuggestions');
+
+        if (statEl) statEl.textContent = suggestions.length;
+
+        if (suggestions.length === 0) {
+            container.innerHTML = '<p class="empty-state">Ainda não há sugestões dos convidados.</p>';
+            return;
+        }
+
+        container.innerHTML = [...suggestions].reverse().map(s => `
+            <div class="suggestion-card">
+                <div class="sc-header">
+                    <span class="sc-name">${escapeHtml(s.nome || 'Anónimo')}</span>
+                    <span class="sc-date">${formatDate(s.date)}</span>
+                </div>
+                <div class="sc-items">
+                    <div class="sc-category ${s.pratos ? '' : 'empty'}">
+                        <h4>Pratos / Comidas</h4>
+                        <p>${s.pratos ? escapeHtml(s.pratos) : 'Sem sugestão'}</p>
+                    </div>
+                    <div class="sc-category ${s.sobremesas ? '' : 'empty'}">
+                        <h4>Sobremesas</h4>
+                        <p>${s.sobremesas ? escapeHtml(s.sobremesas) : 'Sem sugestão'}</p>
+                    </div>
+                    <div class="sc-category ${s.bebidas ? '' : 'empty'}">
+                        <h4>Bebidas</h4>
+                        <p>${s.bebidas ? escapeHtml(s.bebidas) : 'Sem sugestão'}</p>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
     // ---- Menu Items ----
     function getMenuItems() {
         return JSON.parse(localStorage.getItem('wedding_menu') || '{}');
@@ -367,6 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('clearDataBtn').addEventListener('click', () => {
         if (confirm('Tem a certeza? Todos os dados de confirmação serão apagados permanentemente.')) {
             localStorage.removeItem('wedding_rsvps');
+            localStorage.removeItem('wedding_suggestions');
             localStorage.removeItem('wedding_menu');
             loadDashboard();
             alert('Todos os dados foram limpos.');

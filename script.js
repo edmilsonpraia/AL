@@ -264,6 +264,39 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // ---- Suggestions Form ----
+    const sugForm = document.getElementById('suggestionsForm');
+    const sugSuccess = document.getElementById('suggestionSuccess');
+
+    if (sugForm) {
+        sugForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const pratos = document.getElementById('sugPratos').value.trim();
+            const sobremesas = document.getElementById('sugSobremesas').value.trim();
+            const bebidas = document.getElementById('sugBebidas').value.trim();
+            const nome = document.getElementById('sugNome').value.trim();
+
+            if (!pratos && !sobremesas && !bebidas) {
+                alert('Por favor, preencha pelo menos uma sugestão.');
+                return;
+            }
+
+            const suggestions = JSON.parse(localStorage.getItem('wedding_suggestions') || '[]');
+            suggestions.push({
+                nome: nome || 'Anónimo',
+                pratos,
+                sobremesas,
+                bebidas,
+                date: new Date().toISOString()
+            });
+            localStorage.setItem('wedding_suggestions', JSON.stringify(suggestions));
+
+            sugForm.style.display = 'none';
+            sugSuccess.style.display = 'block';
+            sugSuccess.style.animation = 'fadeInUp 0.6s ease forwards';
+        });
+    }
+
     // ---- RSVP Form ----
     const rsvpForm = document.getElementById('rsvpForm');
     const rsvpSuccess = document.getElementById('rsvpSuccess');
