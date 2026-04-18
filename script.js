@@ -30,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const welcomeOverlay = document.getElementById('welcomeOverlay');
     const welcomeForm = document.getElementById('welcomeForm');
     const welcomeDecline = document.getElementById('welcomeDecline');
-    const welcomeSkip = document.getElementById('welcomeSkip');
     const welcomeGuestsRow = document.getElementById('welcomeGuestsRow');
 
     // Show/hide guests field based on "nossa" selection
@@ -47,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 500);
     }
 
-    // Confirm attendance
+    // Confirm attendance - allows entry to the site
     welcomeForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const guestName = document.getElementById('welcomeName').value.trim();
@@ -77,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
         launchConfetti();
     });
 
-    // Decline
+    // Decline - show a thank you message, site stays blocked
     welcomeDecline.addEventListener('click', () => {
         const guestName = document.getElementById('welcomeName').value.trim();
         if (guestName) {
@@ -90,11 +89,18 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             localStorage.setItem('wedding_rsvps', JSON.stringify(rsvps));
         }
-        closeWelcomeModal();
-    });
 
-    // Skip
-    welcomeSkip.addEventListener('click', closeWelcomeModal);
+        const modal = document.getElementById('welcomeModal');
+        modal.innerHTML = `
+            <div class="welcome-ornament">
+                <img src="monogram.svg" alt="L&A" class="welcome-monogram">
+            </div>
+            <h2 class="welcome-names" style="margin-bottom:16px;">Obrigado!</h2>
+            <p class="welcome-text" style="margin-bottom:8px;">Lamentamos que não possa estar presente.</p>
+            <p class="welcome-text">Desejamos-lhe tudo de bom!</p>
+            <div class="welcome-verse" style="margin-top:24px;">"Onde você for, irei; onde você ficar, ficarei." <em>- Rute 1:16</em></div>
+        `;
+    });
 
     // ---- Floating Particles ----
     const particlesContainer = document.querySelector('.particles-container');
@@ -309,36 +315,36 @@ document.addEventListener('DOMContentLoaded', () => {
         noivos: 'Lisandra e Adilson',
         data: '15 de Agosto de 2026',
         dataFormatada: '15/08/2026',
-        diaSemana: 'Sabado',
+        diaSemana: 'Sábado',
         horaCerimonia: '15:30',
         local: 'Estaleiro Imbondeiro',
         endereco: 'Gleba GU22 - Zona ZR2B, Talatona, Luanda',
-        cerimonia: 'Cerimonia civil as 15:30 seguida do copo d\'agua',
-        versiculo: '"Onde voce for, irei; onde voce ficar, ficarei." - Rute 1:16',
-        dresscode: 'Traje elegante/formal. As cores do casamento sao Champagne, Mocha Mousse e Espresso (tons terrosos e elegantes).',
-        presentes: 'Ha lista de presentes em loja fisica ou online, ou podem contribuir para a lua de mel por IBAN (BFA - Lisandra Patricia da Silva F. de Lemos).',
+        cerimonia: 'Cerimónia civil às 15:30 seguida do copo d\'água',
+        versiculo: '"Onde você for, irei; onde você ficar, ficarei." - Rute 1:16',
+        dresscode: 'Traje elegante/formal. As cores do casamento são Champagne, Mocha Mousse e Espresso (tons terrosos e elegantes).',
+        presentes: 'Há lista de presentes em loja física ou online, ou podem contribuir para a lua de mel por IBAN (BFA - Lisandra Patrícia da Silva F. de Lemos).',
         ibans: 'AKZ: AO06 0006 0000 5402865630151 | USD: AO06 0006 0000 5402865631121 | EUR: AO06 0006 0000 5402865631218',
-        confirmar: 'Podem confirmar a presenca ate 15 de Julho de 2026, preenchendo o formulario na seccao "Confirmar Presenca" do site.',
-        estacionamento: 'O Estaleiro Imbondeiro dispoe de estacionamento para os convidados.',
-        criancas: 'Sim, as criancas sao bem-vindas ao casamento!',
+        confirmar: 'Podem confirmar a presença até 15 de Julho de 2026, preenchendo o formulário na secção "Confirmar Presença" do site.',
+        estacionamento: 'O Estaleiro Imbondeiro dispõe de estacionamento para os convidados.',
+        criancas: 'Sim, as crianças são bem-vindas ao casamento!',
     };
 
     const RESPONSES = [
         {
             keywords: ['ola', 'oi', 'hey', 'bom dia', 'boa tarde', 'boa noite', 'hello', 'hi'],
-            reply: () => `Ola! Bem-vindo ao casamento de ${WEDDING_DATA.noivos}! Estou aqui para ajudar com qualquer duvida sobre o grande dia. O que gostaria de saber?`
+            reply: () => `Olá! Bem-vindo ao casamento de ${WEDDING_DATA.noivos}! Estou aqui para ajudar com qualquer dúvida sobre o grande dia. O que gostaria de saber?`
         },
         {
             keywords: ['quando', 'data', 'dia', 'que dia', 'quando e'],
-            reply: () => `O casamento sera no dia ${WEDDING_DATA.data} (${WEDDING_DATA.diaSemana}). A cerimonia civil comeca as ${WEDDING_DATA.horaCerimonia}.`
+            reply: () => `O casamento será no dia ${WEDDING_DATA.data} (${WEDDING_DATA.diaSemana}). A cerimónia civil começa às ${WEDDING_DATA.horaCerimonia}.`
         },
         {
             keywords: ['hora', 'horario', 'horas', 'que horas', 'comeca'],
-            reply: () => `A cerimonia civil comeca as ${WEDDING_DATA.horaCerimonia}, seguida do copo d'agua. Recomendamos chegar com 15-20 minutos de antecedencia.`
+            reply: () => `A cerimónia civil começa às ${WEDDING_DATA.horaCerimonia}, seguida do copo d'água. Recomendamos chegar com 15-20 minutos de antecedência.`
         },
         {
             keywords: ['onde', 'local', 'endereco', 'morada', 'localizacao', 'lugar', 'sitio'],
-            reply: () => `O casamento sera no ${WEDDING_DATA.local}, localizado em ${WEDDING_DATA.endereco}. Pode ver a localizacao no mapa na seccao "Cerimonia" do site.`
+            reply: () => `O casamento será no ${WEDDING_DATA.local}, localizado em ${WEDDING_DATA.endereco}. Pode ver a localização no mapa na secção "Cerimónia" do site.`
         },
         {
             keywords: ['roupa', 'vestir', 'dress', 'traje', 'dresscode', 'codigo'],
@@ -350,8 +356,8 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         {
             keywords: ['iban', 'transferencia', 'contribui', 'dinheiro', 'lua de mel', 'honeymoon'],
-            reply: () => `Podem contribuir para a lua de mel por transferencia BFA (Lisandra Patricia da Silva F. de Lemos):\n\n` +
-                `AKZ: AO06 0006 0000 5402865630151\nUSD: AO06 0006 0000 5402865631121\nEUR: AO06 0006 0000 5402865631218\n\nTambem pode copiar os IBANs na seccao "Presentes" do site!`
+            reply: () => `Podem contribuir para a lua de mel por transferência BFA (Lisandra Patrícia da Silva F. de Lemos):\n\n` +
+                `AKZ: AO06 0006 0000 5402865630151\nUSD: AO06 0006 0000 5402865631121\nEUR: AO06 0006 0000 5402865631218\n\nTambém pode copiar os IBANs na secção "Presentes" do site!`
         },
         {
             keywords: ['confirmar', 'confirmacao', 'rsvp', 'presenca'],
@@ -367,35 +373,35 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         {
             keywords: ['cerimonia', 'civil', 'religios', 'igreja', 'copo', 'agua', 'recepcao', 'festa'],
-            reply: () => `${WEDDING_DATA.cerimonia}. Apos a cerimonia, teremos uma celebracao com jantar, musica e muita alegria!`
+            reply: () => `${WEDDING_DATA.cerimonia}. Após a cerimónia, teremos uma celebração com jantar, música e muita alegria!`
         },
         {
             keywords: ['versiculo', 'biblia', 'frase', 'rute', 'citacao'],
-            reply: () => `O versiculo escolhido pelos noivos e: ${WEDDING_DATA.versiculo}. Uma bela promessa de amor e companheirismo.`
+            reply: () => `O versículo escolhido pelos noivos é: ${WEDDING_DATA.versiculo}. Uma bela promessa de amor e companheirismo.`
         },
         {
             keywords: ['noivos', 'quem', 'casal', 'lisandra', 'adilson'],
-            reply: () => `Os noivos sao ${WEDDING_DATA.noivos}! Um casal que decidiu unir as suas vidas e celebrar o seu amor no dia ${WEDDING_DATA.data}.`
+            reply: () => `Os noivos são ${WEDDING_DATA.noivos}! Um casal que decidiu unir as suas vidas e celebrar o seu amor no dia ${WEDDING_DATA.data}.`
         },
         {
             keywords: ['obrigado', 'obrigada', 'agradeco', 'thanks'],
-            reply: () => `De nada! E um prazer ajudar. Se tiver mais alguma duvida, estou aqui. Nos vemos no casamento!`
+            reply: () => `De nada! É um prazer ajudar. Se tiver mais alguma dúvida, estou aqui. Vemo-nos no casamento!`
         },
         {
             keywords: ['musica', 'danca', 'dancar', 'dj', 'banda'],
-            reply: () => `Havera musica e danca durante a celebracao apos a cerimonia! Preparem-se para uma noite de muita alegria e diversao.`
+            reply: () => `Haverá música e dança durante a celebração após a cerimónia! Preparem-se para uma noite de muita alegria e diversão.`
         },
         {
             keywords: ['menu', 'comida', 'jantar', 'comer', 'refeicao', 'alergia', 'vegetariano'],
-            reply: () => `O jantar sera servido durante o copo d'agua apos a cerimonia. Se tiver alguma restricao alimentar ou alergia, por favor indique no formulario de confirmacao.`
+            reply: () => `O jantar será servido durante o copo d'água após a cerimónia. Se tiver alguma restrição alimentar ou alergia, por favor indique no formulário de confirmação.`
         },
         {
             keywords: ['taxi', 'uber', 'transporte', 'como chegar', 'ir'],
-            reply: () => `O ${WEDDING_DATA.local} fica em ${WEDDING_DATA.endereco}. Pode usar taxi, Uber ou viatura propria. Ha estacionamento no local.`
+            reply: () => `O ${WEDDING_DATA.local} fica em ${WEDDING_DATA.endereco}. Pode usar táxi, Uber ou viatura própria. Há estacionamento no local.`
         },
         {
             keywords: ['foto', 'fotografia', 'fotografo', 'camera'],
-            reply: () => `Havera fotografo profissional no casamento! Sintam-se a vontade para tirar fotos tambem e partilhar este momento especial com os noivos.`
+            reply: () => `Haverá fotógrafo profissional no casamento! Sintam-se à vontade para tirar fotos também e partilhar este momento especial com os noivos.`
         },
         {
             keywords: ['amor', 'love', 'felicidade', 'parabens'],
@@ -405,7 +411,7 @@ document.addEventListener('DOMContentLoaded', () => {
             keywords: ['falta', 'quanto falta', 'contagem', 'countdown'],
             reply: () => {
                 const diff = new Date('2026-08-15T15:30:00').getTime() - Date.now();
-                if (diff <= 0) return 'O grande dia ja chegou!';
+                if (diff <= 0) return 'O grande dia já chegou!';
                 const days = Math.floor(diff / (1000 * 60 * 60 * 24));
                 return `Faltam ${days} dias para o grande dia! Estamos ansiosos!`;
             }
@@ -439,11 +445,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const fallbacks = [
-            `Obrigado pela pergunta! Para informacoes sobre o casamento de ${WEDDING_DATA.noivos}:\n\n` +
+            `Obrigado pela pergunta! Para informações sobre o casamento de ${WEDDING_DATA.noivos}:\n\n` +
             `- Data: ${WEDDING_DATA.data}\n- Hora: ${WEDDING_DATA.horaCerimonia}\n- Local: ${WEDDING_DATA.local}, ${WEDDING_DATA.endereco}\n\n` +
-            `Pergunte-me sobre presentes, dresscode, confirmacao, ou qualquer outro detalhe!`,
+            `Pergunte-me sobre presentes, dresscode, confirmação, ou qualquer outro detalhe!`,
 
-            `Nao tenho a certeza se entendi. Posso ajudar com:\n- Data e hora do casamento\n- Local e como chegar\n- Dresscode\n- Presentes e IBAN\n- Confirmacao de presenca\n\nO que gostaria de saber?`
+            `Não tenho a certeza se entendi. Posso ajudar com:\n- Data e hora do casamento\n- Local e como chegar\n- Dresscode\n- Presentes e IBAN\n- Confirmação de presença\n\nO que gostaria de saber?`
         ];
 
         return fallbacks[Math.floor(Math.random() * fallbacks.length)];
@@ -471,7 +477,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (chatOpen && firstOpen) {
             firstOpen = false;
             setTimeout(() => {
-                addBotMessage(`Ola! Sou a Love IA, assistente do casamento de ${WEDDING_DATA.noivos}! Estou aqui para responder todas as suas duvidas sobre o grande dia. Pergunte-me o que quiser!`);
+                addBotMessage(`Olá! Sou a Love IA, assistente do casamento de ${WEDDING_DATA.noivos}! Estou aqui para responder a todas as suas dúvidas sobre o grande dia. Pergunte-me o que quiser!`);
             }, 500);
         }
 
