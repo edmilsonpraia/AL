@@ -4,20 +4,97 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // ---- Floating Hearts in Hero ----
-    const heroHearts = document.querySelector('.hero-hearts');
-    if (heroHearts) {
-        for (let i = 0; i < 15; i++) {
-            const heart = document.createElement('span');
-            heart.className = 'floating-heart';
-            heart.innerHTML = ['&#9829;', '&#10084;', '&#9825;'][Math.floor(Math.random() * 3)];
-            heart.style.left = Math.random() * 100 + '%';
-            heart.style.fontSize = (0.6 + Math.random() * 1.2) + 'rem';
-            heart.style.animationDuration = (8 + Math.random() * 12) + 's';
-            heart.style.animationDelay = (Math.random() * 10) + 's';
-            heroHearts.appendChild(heart);
+    // ---- Confetti Effect ----
+    function launchConfetti() {
+        const container = document.createElement('div');
+        container.className = 'confetti-container';
+        document.body.appendChild(container);
+
+        const colors = ['#A47764', '#F5E6D3', '#C4A08E', '#8B6152', '#4A2C2A', '#e8c8b8'];
+        for (let i = 0; i < 80; i++) {
+            const piece = document.createElement('div');
+            piece.className = 'confetti-piece';
+            piece.style.left = Math.random() * 100 + '%';
+            piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+            piece.style.animationDuration = (2 + Math.random() * 2) + 's';
+            piece.style.animationDelay = (Math.random() * 0.8) + 's';
+            piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+            piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+            container.appendChild(piece);
         }
+
+        setTimeout(() => container.remove(), 5000);
     }
+
+    // ---- Welcome Modal ----
+    const welcomeOverlay = document.getElementById('welcomeOverlay');
+    const welcomeForm = document.getElementById('welcomeForm');
+    const welcomeDecline = document.getElementById('welcomeDecline');
+    const welcomeSkip = document.getElementById('welcomeSkip');
+    const welcomeGuestsRow = document.getElementById('welcomeGuestsRow');
+
+    // Show/hide guests field based on "nossa" selection
+    document.querySelectorAll('input[name="welcomeType"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            welcomeGuestsRow.style.display = radio.value === 'nossa' && radio.checked ? 'flex' : 'none';
+        });
+    });
+
+    function closeWelcomeModal() {
+        welcomeOverlay.classList.add('closing');
+        setTimeout(() => {
+            welcomeOverlay.remove();
+        }, 500);
+    }
+
+    // Confirm attendance
+    welcomeForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const guestName = document.getElementById('welcomeName').value.trim();
+        const type = document.querySelector('input[name="welcomeType"]:checked').value;
+        const guests = type === 'nossa' ? document.getElementById('welcomeGuests').value : 0;
+
+        const rsvps = JSON.parse(localStorage.getItem('wedding_rsvps') || '[]');
+        rsvps.push({
+            name: guestName,
+            attendance: 'sim',
+            type: type,
+            guests: guests,
+            date: new Date().toISOString(),
+            source: 'welcome'
+        });
+        localStorage.setItem('wedding_rsvps', JSON.stringify(rsvps));
+
+        // Pre-fill the RSVP form too
+        const nameInput = document.getElementById('name');
+        if (nameInput) nameInput.value = guestName;
+        const guestsInput = document.getElementById('guests');
+        if (guestsInput) guestsInput.value = guests;
+        const attendanceSelect = document.getElementById('attendance');
+        if (attendanceSelect) attendanceSelect.value = 'sim';
+
+        closeWelcomeModal();
+        launchConfetti();
+    });
+
+    // Decline
+    welcomeDecline.addEventListener('click', () => {
+        const guestName = document.getElementById('welcomeName').value.trim();
+        if (guestName) {
+            const rsvps = JSON.parse(localStorage.getItem('wedding_rsvps') || '[]');
+            rsvps.push({
+                name: guestName,
+                attendance: 'nao',
+                date: new Date().toISOString(),
+                source: 'welcome'
+            });
+            localStorage.setItem('wedding_rsvps', JSON.stringify(rsvps));
+        }
+        closeWelcomeModal();
+    });
+
+    // Skip
+    welcomeSkip.addEventListener('click', closeWelcomeModal);
 
     // ---- Floating Particles ----
     const particlesContainer = document.querySelector('.particles-container');
@@ -180,28 +257,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 2000);
         });
     });
-
-    // ---- Confetti Effect ----
-    function launchConfetti() {
-        const container = document.createElement('div');
-        container.className = 'confetti-container';
-        document.body.appendChild(container);
-
-        const colors = ['#A47764', '#F5E6D3', '#C4A08E', '#8B6152', '#4A2C2A', '#e8c8b8'];
-        for (let i = 0; i < 80; i++) {
-            const piece = document.createElement('div');
-            piece.className = 'confetti-piece';
-            piece.style.left = Math.random() * 100 + '%';
-            piece.style.background = colors[Math.floor(Math.random() * colors.length)];
-            piece.style.animationDuration = (2 + Math.random() * 2) + 's';
-            piece.style.animationDelay = (Math.random() * 0.8) + 's';
-            piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
-            piece.style.transform = `rotate(${Math.random() * 360}deg)`;
-            container.appendChild(piece);
-        }
-
-        setTimeout(() => container.remove(), 5000);
-    }
 
     // ---- RSVP Form ----
     const rsvpForm = document.getElementById('rsvpForm');

@@ -10,6 +10,59 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Welcome Modal -->
+    <div class="welcome-overlay" id="welcomeOverlay">
+        <div class="welcome-modal" id="welcomeModal">
+            <div class="welcome-ornament">
+                <img src="monogram.svg" alt="L&A" class="welcome-monogram">
+            </div>
+            <p class="welcome-subtitle">Juntos com as suas familias</p>
+            <h2 class="welcome-names">Lisandra & Adilson</h2>
+            <p class="welcome-text">Convidam-vos para celebrar o seu casamento</p>
+            <div class="welcome-date-box">
+                <span>15 de Agosto de 2026</span>
+                <span class="welcome-dot">&bull;</span>
+                <span>15:30</span>
+            </div>
+            <div class="welcome-verse">"Onde voce for, irei; onde voce ficar, ficarei." <em>- Rute 1:16</em></div>
+            <div class="welcome-divider"></div>
+            <p class="welcome-confirm-label">Confirme a sua presenca</p>
+            <form class="welcome-form" id="welcomeForm">
+                <div class="welcome-phrase">
+                    <span>Eu</span>
+                    <input type="text" id="welcomeName" placeholder="o seu nome" required autocomplete="off">
+                    <span>confirmo a</span>
+                </div>
+                <div class="welcome-radio-group">
+                    <label class="welcome-radio">
+                        <input type="radio" name="welcomeType" value="minha" checked>
+                        <span class="radio-custom"></span>
+                        minha presenca
+                    </label>
+                    <label class="welcome-radio">
+                        <input type="radio" name="welcomeType" value="nossa">
+                        <span class="radio-custom"></span>
+                        nossa presenca
+                    </label>
+                </div>
+                <div class="welcome-guests-row" id="welcomeGuestsRow" style="display:none;">
+                    <label>Numero de acompanhantes:</label>
+                    <input type="number" id="welcomeGuests" min="1" max="10" value="1">
+                </div>
+                <div class="welcome-buttons">
+                    <button type="submit" class="welcome-btn confirm">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                        Confirmar Presenca
+                    </button>
+                    <button type="button" class="welcome-btn decline" id="welcomeDecline">
+                        Infelizmente nao poderei ir
+                    </button>
+                </div>
+                <button type="button" class="welcome-skip" id="welcomeSkip">Ver o site primeiro</button>
+            </form>
+        </div>
+    </div>
+
     <!-- Floating Particles -->
     <div class="particles-container"></div>
 
