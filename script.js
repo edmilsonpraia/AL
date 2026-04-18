@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
     revealElements.forEach(el => revealObserver.observe(el));
 
     // ---- Countdown Timer ----
-    const weddingDate = new Date('2026-08-15T15:30:00').getTime();
+    const weddingDate = new Date('2026-08-15T14:30:00').getTime();
     let prevSeconds = -1;
 
     function updateCountdown() {
@@ -380,10 +380,10 @@ document.addEventListener('DOMContentLoaded', () => {
         data: '15 de Agosto de 2026',
         dataFormatada: '15/08/2026',
         diaSemana: 'Sábado',
-        horaCerimonia: '15:30',
+        horaCerimonia: '14:30',
         local: 'Estaleiro Imbondeiro',
         endereco: 'Gleba GU22 - Zona ZR2B, Talatona, Luanda',
-        cerimonia: 'Cerimónia civil às 15:30 seguida do copo d\'água',
+        cerimonia: 'Cerimónia civil às 14:30 seguida do copo d\'água',
         versiculo: '"Onde você for, irei; onde você ficar, ficarei." - Rute 1:16',
         dresscode: 'Traje elegante — tente ofuscar os noivos! Tons terrosos, champagne e dourado são bem-vindos. O tema da festa é "Viagem Gastronómica".',
         presentes: 'Há lista de presentes em loja física ou online, ou podem contribuir para a lua de mel por IBAN (BFA - Lisandra Patrícia da Silva F. de Lemos).',
@@ -474,7 +474,7 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             keywords: ['falta', 'quanto falta', 'contagem', 'countdown'],
             reply: () => {
-                const diff = new Date('2026-08-15T15:30:00').getTime() - Date.now();
+                const diff = new Date('2026-08-15T14:30:00').getTime() - Date.now();
                 if (diff <= 0) return 'O grande dia já chegou!';
                 const days = Math.floor(diff / (1000 * 60 * 60 * 24));
                 return `Faltam ${days} dias para o grande dia! Estamos ansiosos!`;
