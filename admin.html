@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Casamento Lisandra & Adilson</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>L & A</h1>
+                <p>Painel de Administração</p>
+            </div>
+            <form class="login-form" id="loginForm">
+                <div class="input-group">
+                    <label for="loginUser">Utilizador</label>
+                    <input type="text" id="loginUser" placeholder="admin" required autocomplete="off">
+                </div>
+                <div class="input-group">
+                    <label for="loginPass">Palavra-passe</label>
+                    <input type="password" id="loginPass" placeholder="••••••••" required>
+                </div>
+                <p class="login-error" id="loginError" style="display:none;">Credenciais incorrectas. Tente novamente.</p>
+                <button type="submit" class="login-btn">Entrar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div class="dashboard" id="dashboard" style="display:none;">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>L & A</h2>
+                <span>Administração</span>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-tab="resumo">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                    Resumo
+                </button>
+                <button class="nav-item" data-tab="convidados">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+                    Convidados
+                </button>
+                <button class="nav-item" data-tab="mensagens">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                    Mensagens
+                </button>
+                <button class="nav-item" data-tab="menu">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 8h1a4 4 0 110 8h-1M3 8h14v9a4 4 0 01-4 4H7a4 4 0 01-4-4V8zM6 1v3M10 1v3M14 1v3"/></svg>
+                    Menu & Catering
+                </button>
+                <button class="nav-item" data-tab="configuracoes">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+                    Configurações
+                </button>
+            </nav>
+            <button class="logout-btn" id="logoutBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+                Terminar Sessão
+            </button>
+        </aside>
+
+        <!-- Mobile header -->
+        <div class="mobile-header" id="mobileHeader">
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+            <h3>L & A - Admin</h3>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Resumo Tab -->
+            <div class="tab-content active" id="tab-resumo">
+                <div class="page-header">
+                    <h2>Resumo do Casamento</h2>
+                    <p>15 de Agosto de 2026 - Estaleiro Imbondeiro, Talatona</p>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon confirmed">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-number" id="statConfirmed">0</span>
+                            <span class="stat-label">Confirmados</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon declined">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-number" id="statDeclined">0</span>
+                            <span class="stat-label">Não podem ir</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon total">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-number" id="statTotal">0</span>
+                            <span class="stat-label">Total de pessoas</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon countdown">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-number" id="statDays">0</span>
+                            <span class="stat-label">Dias restantes</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="recent-section">
+                    <h3>Últimas Confirmações</h3>
+                    <div class="recent-list" id="recentList">
+                        <p class="empty-state">Ainda não há confirmações.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Convidados Tab -->
+            <div class="tab-content" id="tab-convidados">
+                <div class="page-header">
+                    <h2>Lista de Convidados</h2>
+                    <div class="header-actions">
+                        <input type="text" class="search-input" id="searchGuests" placeholder="Pesquisar convidado...">
+                        <select class="filter-select" id="filterGuests">
+                            <option value="todos">Todos</option>
+                            <option value="sim">Confirmados</option>
+                            <option value="nao">Não podem ir</option>
+                        </select>
+                        <button class="export-btn" id="exportBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                            Exportar
+                        </button>
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <table class="guests-table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Telefone</th>
+                                <th>Acompanhantes</th>
+                                <th>Estado</th>
+                                <th>Data</th>
+                                <th>Acções</th>
+                            </tr>
+                        </thead>
+                        <tbody id="guestsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+                <p class="empty-state" id="noGuests" style="display:none;">Ainda não há convidados registados.</p>
+            </div>
+
+            <!-- Mensagens Tab -->
+            <div class="tab-content" id="tab-mensagens">
+                <div class="page-header">
+                    <h2>Mensagens dos Convidados</h2>
+                </div>
+                <div class="messages-list" id="messagesList">
+                    <p class="empty-state">Ainda não há mensagens.</p>
+                </div>
+            </div>
+
+            <!-- Menu & Catering Tab -->
+            <div class="tab-content" id="tab-menu">
+                <div class="page-header">
+                    <h2>Menu & Catering</h2>
+                    <p>Sugestões para o copo d'água</p>
+                </div>
+                <div class="menu-sections">
+                    <!-- Entradas -->
+                    <div class="menu-category">
+                        <div class="category-header">
+                            <h3>Entradas</h3>
+                            <button class="add-item-btn" data-category="entradas">+ Adicionar</button>
+                        </div>
+                        <div class="menu-items" id="menu-entradas">
+                            <div class="menu-item suggestion">
+                                <span class="item-name">Rissóis de camarão</span>
+                                <span class="item-tag">Sugestão</span>
+                            </div>
+                            <div class="menu-item suggestion">
+                                <span class="item-name">Croquetes de carne</span>
+                                <span class="item-tag">Sugestão</span>
+                            </div>
+                            <div class="menu-item suggestion">
+                                <span class="item-name">Pastéis de bacalhau</span>
+                                <span class="item-tag">Sugestão</span>
+                            </div>
+                            <div class="menu-item suggestion">
+                                <span class="item-name">Chamuças de frango</span>
+                                <span class="item-tag">Sugestão</span>
+                            </div>
+                            <div class="menu-item suggestion">
+                                <span class="item-name">Tábua de queijos e enchidos</span>
+                                <span class="item-tag">Sugestão</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Pratos Principais -->
+                    <div class="menu-category">
+                        <div class="category-header">
+                            <h3>Pratos Principais</h3>
+                            <button class="add-item-btn" data-category="pratos">+ Adicionar</button>
+                        </div>
+                        <div class="menu-items" id="menu-pratos">
+                            <div class="menu-item suggestion">
+                                <span class="item-name">Muamba de galinha</span>
+                                <span class="item-tag">Tradicional</span>
+                            </div>
+                            <div class="menu-item suggestion">
+                                <span class="item-name">Calulu de peixe</span>
+                                <span class="item-tag">Tradicional</span>
+                            </div>
+                            <div class="menu-item suggestion">
+                                <span class="item-name">Cabrito assado no forno</span>
+                                <span class="item-tag">Sugestão</span>
+                            </div>
+                            <div class="menu-item suggestion">
+                                <span class="item-name">Lombo de vitela com molho de vinho</span>
+                                <span class="item-tag">Sugestão</span>
+                            </div>
+                            <div class="menu-item suggestion">
+                                <span class="item-name">Peixe grelhado com legumes</span>
+                                <span class="item-tag">Sugestão</span>
+                            </div>
+                            <div class="menu-item suggestion">
+                                <span class="item-name">Arroz de marisco</span>
+                                <span class="item-tag">Sugestão</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Acompanhamentos -->
+                    <div class="menu-category">
+                        <div class="category-header">
+                            <h3>Acompanhamentos</h3>
+                            <button class="add-item-btn" data-category="acompanhamentos">+ Adicionar</button>
+                        </div>
+                        <div class="menu-items" id="menu-acompanhamentos">
+                            <div class="menu-item suggestion">
+                                <span class="item-name">Funge</span>
+                                <span class="item-tag">Tradicional</span>
+                            </div>
+                            <div class="menu-item suggestion">
+                                <span class="item-name">Arroz branco</span>
+                                <span class="item-tag">Sugestão</span>
+                            </div>
+                            <div class="menu-item suggestion">
+                                <span class="item-name">Batata assada com ervas</span>
+                                <span class="item-tag">Sugestão</span>
+                            </div>
+                            <div class="menu-item suggestion">
+                                <span class="item-name">Salada tropical</span>
+                                <span class="item-tag">Sugestão</span>
+                            </div>
+                            <div class="menu-item suggestion">
+                                <span class="item-name">Feijão de óleo de palma</span>
+                                <span class="item-tag">Tradicional</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Sobremesas -->
+                    <div class="menu-category">
+                        <div class="category-header">
+                            <h3>Sobremesas</h3>
+                            <button class="add-item-btn" data-category="sobremesas">+ Adicionar</button>
+                        </div>
+                        <div class="menu-items" id="menu-sobremesas">
+                            <div class="menu-item suggestion">
+                                <span class="item-name">Bolo de casamento</span>
+                                <span class="item-tag">Principal</span>
+                            </div>
+                            <div class="menu-item suggestion">
+                                <span class="item-name">Cocada</span>
+                                <span class="item-tag">Tradicional</span>
+                            </div>
+                            <div class="menu-item suggestion">
+                                <span class="item-name">Pudim de leite</span>
+                                <span class="item-tag">Sugestão</span>
+                            </div>
+                            <div class="menu-item suggestion">
+                                <span class="item-name">Doce de ginguba</span>
+                                <span class="item-tag">Tradicional</span>
+                            </div>
+                            <div class="menu-item suggestion">
+                                <span class="item-name">Frutas tropicais</span>
+                                <span class="item-tag">Sugestão</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Bebidas -->
+                    <div class="menu-category">
+                        <div class="category-header">
+                            <h3>Bebidas</h3>
+                            <button class="add-item-btn" data-category="bebidas">+ Adicionar</button>
+                        </div>
+                        <div class="menu-items" id="menu-bebidas">
+                            <div class="menu-item suggestion">
+                                <span class="item-name">Champanhe / Espumante</span>
+                                <span class="item-tag">Brinde</span>
+                            </div>
+                            <div class="menu-item suggestion">
+                                <span class="item-name">Vinho tinto e branco</span>
+                                <span class="item-tag">Sugestão</span>
+                            </div>
+                            <div class="menu-item suggestion">
+                                <span class="item-name">Sangria</span>
+                                <span class="item-tag">Sugestão</span>
+                            </div>
+                            <div class="menu-item suggestion">
+                                <span class="item-name">Cocktails (Mojito, Caipirinha)</span>
+                                <span class="item-tag">Sugestão</span>
+                            </div>
+                            <div class="menu-item suggestion">
+                                <span class="item-name">Sumos naturais (manga, maracujá)</span>
+                                <span class="item-tag">Sugestão</span>
+                            </div>
+                            <div class="menu-item suggestion">
+                                <span class="item-name">Água e refrigerantes</span>
+                                <span class="item-tag">Essencial</span>
+                            </div>
+                            <div class="menu-item suggestion">
+                                <span class="item-name">Cerveja (Cuca, Nocal)</span>
+                                <span class="item-tag">Sugestão</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configurações Tab -->
+            <div class="tab-content" id="tab-configuracoes">
+                <div class="page-header">
+                    <h2>Configurações</h2>
+                </div>
+                <div class="config-section">
+                    <h3>Alterar Palavra-passe</h3>
+                    <form class="config-form" id="changePassForm">
+                        <div class="input-group">
+                            <label>Palavra-passe actual</label>
+                            <input type="password" id="currentPass" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Nova palavra-passe</label>
+                            <input type="password" id="newPass" required minlength="4">
+                        </div>
+                        <div class="input-group">
+                            <label>Confirmar nova palavra-passe</label>
+                            <input type="password" id="confirmPass" required minlength="4">
+                        </div>
+                        <button type="submit" class="save-btn">Guardar Palavra-passe</button>
+                        <p class="config-msg" id="passMsg" style="display:none;"></p>
+                    </form>
+                </div>
+                <div class="config-section danger">
+                    <h3>Dados</h3>
+                    <p>Limpar todas as confirmações e recomeçar.</p>
+                    <button class="danger-btn" id="clearDataBtn">Limpar Todos os Dados</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Item Modal -->
+    <div class="modal-overlay" id="addItemModal" style="display:none;">
+        <div class="modal-card">
+            <h3>Adicionar ao Menu</h3>
+            <form id="addItemForm">
+                <div class="input-group">
+                    <label>Nome do item</label>
+                    <input type="text" id="newItemName" required placeholder="Ex: Bife à café de Angola">
+                </div>
+                <div class="input-group">
+                    <label>Tipo</label>
+                    <select id="newItemTag">
+                        <option value="Sugestão">Sugestão</option>
+                        <option value="Tradicional">Tradicional</option>
+                        <option value="Essencial">Essencial</option>
+                        <option value="Principal">Principal</option>
+                        <option value="Brinde">Brinde</option>
+                    </select>
+                </div>
+                <input type="hidden" id="newItemCategory">
+                <div class="modal-buttons">
+                    <button type="button" class="cancel-btn" id="cancelAddItem">Cancelar</button>
+                    <button type="submit" class="save-btn">Adicionar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
