@@ -398,8 +398,15 @@ body {
 }
 
 /* ---- Suggestions Admin ---- */
-.suggestions-stats {
-    margin-bottom: 24px;
+.suggestions-count-badge {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--mocha);
+    background: rgba(164,119,100,0.1);
+    padding: 5px 14px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
 }
 
 .suggestions-admin-list {

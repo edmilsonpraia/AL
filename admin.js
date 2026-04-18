@@ -254,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const container = document.getElementById('suggestionsAdminList');
         const statEl = document.getElementById('statSuggestions');
 
-        if (statEl) statEl.textContent = suggestions.length;
+        if (statEl) statEl.textContent = suggestions.length + ' recebidas';
 
         if (suggestions.length === 0) {
             container.innerHTML = '<p class="empty-state">Ainda não há sugestões dos convidados.</p>';
