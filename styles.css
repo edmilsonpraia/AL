@@ -608,8 +608,7 @@ body {
 .monogram {
     width: 140px;
     height: auto;
-    color: var(--white);
-    opacity: 0.9;
+    opacity: 0.95;
 }
 
 .monogram-text {

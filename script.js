@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const modal = document.getElementById('welcomeModal');
         modal.innerHTML = `
             <div class="welcome-ornament">
-                <img src="monogram.svg" alt="L&A" class="welcome-monogram">
+                <img src="logo.png" alt="L&A" class="welcome-monogram">
             </div>
             <h2 class="welcome-names" style="margin-bottom:16px;">Obrigado!</h2>
             <p class="welcome-text" style="margin-bottom:8px;">Lamentamos que não possa estar presente.</p>
