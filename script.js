@@ -32,6 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const welcomeDecline = document.getElementById('welcomeDecline');
     const welcomeGuestsRow = document.getElementById('welcomeGuestsRow');
 
+    // Check if already confirmed - skip modal
+    const confirmedGuest = localStorage.getItem('wedding_confirmed_guest');
+    if (confirmedGuest) {
+        welcomeOverlay.remove();
+    }
+
     // Show/hide guests field based on "nossa" selection
     document.querySelectorAll('input[name="welcomeType"]').forEach(radio => {
         radio.addEventListener('change', () => {
@@ -63,6 +69,9 @@ document.addEventListener('DOMContentLoaded', () => {
             source: 'welcome'
         });
         localStorage.setItem('wedding_rsvps', JSON.stringify(rsvps));
+
+        // Save confirmation so modal won't show again
+        localStorage.setItem('wedding_confirmed_guest', guestName);
 
         // Pre-fill the RSVP form too
         const nameInput = document.getElementById('name');
