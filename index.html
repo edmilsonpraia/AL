@@ -366,64 +366,7 @@
                     <div class="ornament-line"></div>
                 </div>
             </div>
-            <p class="suggestions-intro reveal">Estas são algumas ideias para o nosso copo d'água. Gostaríamos de contar com a vossa ajuda — sugiram o que gostariam de ver no menu!</p>
-
-            <!-- Sugestões de inspiração -->
-            <div class="menu-preview reveal">
-                <div class="menu-preview-card">
-                    <div class="mpc-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h18M3 6v14a2 2 0 002 2h14a2 2 0 002-2V6M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
-                    </div>
-                    <h4>Entradas</h4>
-                    <ul>
-                        <li>Rissóis de camarão</li>
-                        <li>Pastéis de bacalhau</li>
-                        <li>Chamuças de frango</li>
-                        <li>Tábua de queijos e enchidos</li>
-                    </ul>
-                </div>
-                <div class="menu-preview-card">
-                    <div class="mpc-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>
-                    </div>
-                    <h4>Pratos Principais</h4>
-                    <ul>
-                        <li>Muamba de galinha</li>
-                        <li>Calulu de peixe</li>
-                        <li>Cabrito assado no forno</li>
-                        <li>Arroz de marisco</li>
-                    </ul>
-                </div>
-                <div class="menu-preview-card">
-                    <div class="mpc-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2h8l2 6H6l2-6zM6 8v1a6 6 0 0012 0V8"/><path d="M12 15v4M8 19h8"/></svg>
-                    </div>
-                    <h4>Sobremesas</h4>
-                    <ul>
-                        <li>Bolo de casamento</li>
-                        <li>Cocada</li>
-                        <li>Doce de ginguba</li>
-                        <li>Pudim de leite</li>
-                    </ul>
-                </div>
-                <div class="menu-preview-card">
-                    <div class="mpc-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 8h1a4 4 0 110 8h-1M3 8h14v9a4 4 0 01-4 4H7a4 4 0 01-4-4V8z"/><path d="M6 1v3M10 1v3M14 1v3"/></svg>
-                    </div>
-                    <h4>Bebidas</h4>
-                    <ul>
-                        <li>Champanhe / Espumante</li>
-                        <li>Sangria</li>
-                        <li>Sumos naturais</li>
-                        <li>Cerveja (Cuca, Nocal)</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Formulário de sugestão -->
-            <div class="suggest-cta reveal">
-                <h3>Tem outras ideias? Partilhe connosco!</h3>
-            </div>
+            <p class="suggestions-intro reveal">Gostaríamos de contar com a vossa ajuda! Toquem nas sugestões ou escrevam as vossas próprias ideias para o copo d'água.</p>
             <form class="suggestions-form reveal" id="suggestionsForm">
                 <div class="suggestions-grid">
                     <div class="suggestion-group">
@@ -434,7 +377,17 @@
                             </svg>
                         </div>
                         <label>Pratos / Comidas</label>
-                        <textarea id="sugPratos" placeholder="Sugira entradas, pratos principais, acompanhamentos..." rows="3"></textarea>
+                        <div class="sg-tags" data-target="sugPratos">
+                            <button type="button" class="sg-tag">Muamba de galinha</button>
+                            <button type="button" class="sg-tag">Calulu de peixe</button>
+                            <button type="button" class="sg-tag">Cabrito assado</button>
+                            <button type="button" class="sg-tag">Arroz de marisco</button>
+                            <button type="button" class="sg-tag">Peixe grelhado</button>
+                            <button type="button" class="sg-tag">Funge</button>
+                            <button type="button" class="sg-tag">Feijão de palma</button>
+                            <button type="button" class="sg-tag">Lombo de vitela</button>
+                        </div>
+                        <textarea id="sugPratos" placeholder="Toque nas sugestões acima ou escreva as suas..." rows="3"></textarea>
                     </div>
                     <div class="suggestion-group">
                         <div class="sg-icon">
@@ -444,7 +397,15 @@
                             </svg>
                         </div>
                         <label>Sobremesas</label>
-                        <textarea id="sugSobremesas" placeholder="Sugira doces, bolos, frutas..." rows="3"></textarea>
+                        <div class="sg-tags" data-target="sugSobremesas">
+                            <button type="button" class="sg-tag">Cocada</button>
+                            <button type="button" class="sg-tag">Pudim de leite</button>
+                            <button type="button" class="sg-tag">Doce de ginguba</button>
+                            <button type="button" class="sg-tag">Frutas tropicais</button>
+                            <button type="button" class="sg-tag">Mousse de chocolate</button>
+                            <button type="button" class="sg-tag">Bolo de mandioca</button>
+                        </div>
+                        <textarea id="sugSobremesas" placeholder="Toque nas sugestões acima ou escreva as suas..." rows="3"></textarea>
                     </div>
                     <div class="suggestion-group">
                         <div class="sg-icon">
@@ -454,7 +415,16 @@
                             </svg>
                         </div>
                         <label>Bebidas</label>
-                        <textarea id="sugBebidas" placeholder="Sugira bebidas, cocktails, sumos..." rows="3"></textarea>
+                        <div class="sg-tags" data-target="sugBebidas">
+                            <button type="button" class="sg-tag">Champanhe</button>
+                            <button type="button" class="sg-tag">Sangria</button>
+                            <button type="button" class="sg-tag">Sumo de maracujá</button>
+                            <button type="button" class="sg-tag">Cocktails</button>
+                            <button type="button" class="sg-tag">Cerveja Cuca</button>
+                            <button type="button" class="sg-tag">Vinho tinto</button>
+                            <button type="button" class="sg-tag">Caipirinha</button>
+                        </div>
+                        <textarea id="sugBebidas" placeholder="Toque nas sugestões acima ou escreva as suas..." rows="3"></textarea>
                     </div>
                 </div>
                 <div class="suggestion-name-row">

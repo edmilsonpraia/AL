@@ -273,6 +273,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // ---- Suggestion Tags ----
+    document.querySelectorAll('.sg-tag').forEach(tag => {
+        tag.addEventListener('click', () => {
+            const targetId = tag.closest('.sg-tags').dataset.target;
+            const textarea = document.getElementById(targetId);
+            const item = tag.textContent.trim();
+
+            if (tag.classList.contains('selected')) {
+                // Remove from textarea
+                tag.classList.remove('selected');
+                const lines = textarea.value.split(', ').filter(l => l.trim() !== item);
+                textarea.value = lines.join(', ');
+            } else {
+                // Add to textarea
+                tag.classList.add('selected');
+                textarea.value = textarea.value
+                    ? textarea.value + ', ' + item
+                    : item;
+            }
+        });
+    });
+
     // ---- Suggestions Form ----
     const sugForm = document.getElementById('suggestionsForm');
     const sugSuccess = document.getElementById('suggestionSuccess');

@@ -1323,91 +1323,50 @@ body {
     font-weight: 300;
 }
 
-/* Menu preview cards */
-.menu-preview {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    max-width: 900px;
-    margin: 0 auto 44px;
-}
-
-.menu-preview-card {
-    background: var(--white);
-    border-radius: 14px;
-    padding: 22px 18px;
-    text-align: center;
-    border: 1px solid rgba(164, 119, 100, 0.1);
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.menu-preview-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(74, 44, 42, 0.08);
-}
-
-.mpc-icon {
-    color: var(--mocha);
-    margin-bottom: 10px;
-    opacity: 0.65;
-}
-
-.menu-preview-card h4 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: var(--espresso);
-    margin-bottom: 12px;
-}
-
-.menu-preview-card ul {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.menu-preview-card li {
-    font-size: 0.78rem;
-    color: var(--text-medium);
-    font-weight: 300;
-    padding: 5px 10px;
-    background: var(--champagne-light);
-    border-radius: 6px;
-    transition: background 0.2s;
-}
-
-.menu-preview-card li:hover {
-    background: var(--champagne);
-}
-
-.suggest-cta {
-    text-align: center;
-    margin-bottom: 28px;
-}
-
-.suggest-cta h3 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.5rem;
-    font-weight: 400;
-    color: var(--espresso);
-}
-
 .suggestions-form {
     max-width: 800px;
     margin: 0 auto;
 }
 
-@media (max-width: 768px) {
-    .menu-preview {
-        grid-template-columns: 1fr 1fr;
-    }
+/* Suggestion tags */
+.sg-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+    justify-content: center;
 }
 
-@media (max-width: 480px) {
-    .menu-preview {
-        grid-template-columns: 1fr;
-    }
+.sg-tag {
+    padding: 5px 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: var(--mocha-dark);
+    background: var(--champagne);
+    border: 1px solid rgba(164, 119, 100, 0.15);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    letter-spacing: 0.3px;
+}
+
+.sg-tag:hover {
+    background: var(--mocha);
+    color: var(--white);
+    border-color: var(--mocha);
+    transform: scale(1.05);
+}
+
+.sg-tag.selected {
+    background: var(--mocha-dark);
+    color: var(--white);
+    border-color: var(--mocha-dark);
+}
+
+.sg-tag.selected:hover {
+    background: var(--text-light);
+    border-color: var(--text-light);
 }
 
 .suggestions-grid {
