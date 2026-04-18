@@ -443,10 +443,10 @@ body {
 
 .nav-logo {
     font-family: 'Great Vibes', cursive;
-    font-size: 1.8rem;
-    color: var(--white);
+    font-size: 1.4rem;
+    color: rgba(255, 255, 255, 0.7);
     text-decoration: none;
-    transition: color 0.4s;
+    transition: color 0.4s, opacity 0.4s;
 }
 
 #navbar.scrolled .nav-logo {
