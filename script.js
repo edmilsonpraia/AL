@@ -385,7 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
         endereco: 'Gleba GU22 - Zona ZR2B, Talatona, Luanda',
         cerimonia: 'Cerimónia civil às 15:30 seguida do copo d\'água',
         versiculo: '"Onde você for, irei; onde você ficar, ficarei." - Rute 1:16',
-        dresscode: 'Traje elegante/formal. As cores do casamento são Champagne, Mocha Mousse e Espresso (tons terrosos e elegantes).',
+        dresscode: 'Traje elegante — tente ofuscar os noivos! Tons terrosos, champagne e dourado são bem-vindos. O tema da festa é "Viagem Gastronómica".',
         presentes: 'Há lista de presentes em loja física ou online, ou podem contribuir para a lua de mel por IBAN (BFA - Lisandra Patrícia da Silva F. de Lemos).',
         ibans: 'AKZ: AO06 0006 0000 5402865630151 | USD: AO06 0006 0000 5402865631121 | EUR: AO06 0006 0000 5402865631218',
         confirmar: 'Podem confirmar a presença até 15 de Julho de 2026, preenchendo o formulário na secção "Confirmar Presença" do site.',
