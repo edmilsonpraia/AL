@@ -606,9 +606,9 @@ body {
 }
 
 .monogram {
-    width: 120px;
+    width: 140px;
     height: auto;
-    filter: brightness(0) invert(1);
+    color: var(--white);
     opacity: 0.9;
 }
 
