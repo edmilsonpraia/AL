@@ -53,24 +53,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Confirm attendance - allows entry to the site
-    welcomeForm.addEventListener('submit', (e) => {
+    welcomeForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const guestName = document.getElementById('welcomeName').value.trim();
         const type = document.querySelector('input[name="welcomeType"]:checked').value;
         const guests = type === 'nossa' ? document.getElementById('welcomeGuests').value : 0;
 
-        const rsvps = JSON.parse(localStorage.getItem('wedding_rsvps') || '[]');
-        rsvps.push({
+        // Save to Supabase
+        await saveRSVP({
             name: guestName,
             attendance: 'sim',
             type: type,
             guests: guests,
-            date: new Date().toISOString(),
             source: 'welcome'
         });
-        localStorage.setItem('wedding_rsvps', JSON.stringify(rsvps));
 
-        // Save confirmation so modal won't show again
+        // Save confirmation locally so modal won't show again
         localStorage.setItem('wedding_confirmed_guest', guestName);
 
         // Pre-fill the RSVP form too
@@ -86,17 +84,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Decline - show a thank you message, site stays blocked
-    welcomeDecline.addEventListener('click', () => {
+    welcomeDecline.addEventListener('click', async () => {
         const guestName = document.getElementById('welcomeName').value.trim();
         if (guestName) {
-            const rsvps = JSON.parse(localStorage.getItem('wedding_rsvps') || '[]');
-            rsvps.push({
+            await saveRSVP({
                 name: guestName,
                 attendance: 'nao',
-                date: new Date().toISOString(),
                 source: 'welcome'
             });
-            localStorage.setItem('wedding_rsvps', JSON.stringify(rsvps));
         }
 
         const modal = document.getElementById('welcomeModal');
@@ -300,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sugSuccess = document.getElementById('suggestionSuccess');
 
     if (sugForm) {
-        sugForm.addEventListener('submit', (e) => {
+        sugForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const pratos = document.getElementById('sugPratos').value.trim();
             const sobremesas = document.getElementById('sugSobremesas').value.trim();
@@ -312,15 +307,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const suggestions = JSON.parse(localStorage.getItem('wedding_suggestions') || '[]');
-            suggestions.push({
+            await saveSuggestion({
                 nome: nome || 'Anónimo',
                 pratos,
                 sobremesas,
-                bebidas,
-                date: new Date().toISOString()
+                bebidas
             });
-            localStorage.setItem('wedding_suggestions', JSON.stringify(suggestions));
 
             sugForm.style.display = 'none';
             sugSuccess.style.display = 'block';
@@ -333,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const rsvpSuccess = document.getElementById('rsvpSuccess');
 
     if (rsvpForm) {
-        rsvpForm.addEventListener('submit', (e) => {
+        rsvpForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const formData = {
@@ -341,12 +333,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 phone: document.getElementById('phone').value,
                 guests: document.getElementById('guests').value,
                 attendance: document.getElementById('attendance').value,
-                message: document.getElementById('message').value
+                message: document.getElementById('message').value,
+                source: 'rsvp_form'
             };
 
-            const rsvps = JSON.parse(localStorage.getItem('wedding_rsvps') || '[]');
-            rsvps.push({ ...formData, date: new Date().toISOString() });
-            localStorage.setItem('wedding_rsvps', JSON.stringify(rsvps));
+            await saveRSVP(formData);
+
+            if (formData.attendance === 'sim') {
+                localStorage.setItem('wedding_confirmed_guest', formData.name);
+            }
 
             rsvpForm.style.display = 'none';
             rsvpSuccess.style.display = 'block';

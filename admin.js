@@ -76,17 +76,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ---- Load Dashboard Data ----
-    function getRSVPs() {
-        return JSON.parse(localStorage.getItem('wedding_rsvps') || '[]');
-    }
+    let rsvpsCache = [];
 
-    function loadDashboard() {
-        const rsvps = getRSVPs();
-        loadStats(rsvps);
-        loadRecentList(rsvps);
-        loadGuestsTable(rsvps);
-        loadMessages(rsvps);
-        loadSuggestions();
+    async function loadDashboard() {
+        rsvpsCache = await getRSVPs();
+        loadStats(rsvpsCache);
+        loadRecentList(rsvpsCache);
+        loadGuestsTable(rsvpsCache);
+        loadMessages(rsvpsCache);
+        await loadSuggestions();
         loadMenuItems();
     }
 
@@ -123,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="recent-item">
                 <div>
                     <span class="ri-name">${escapeHtml(r.name || 'Sem nome')}</span>
-                    <span class="ri-date">${formatDate(r.date)}</span>
+                    <span class="ri-date">${formatDate(r.created_at || r.date)}</span>
                 </div>
                 <span class="badge ${r.attendance === 'sim' ? 'confirmed' : 'declined'}">
                     ${r.attendance === 'sim' ? 'Confirmado' : 'Não vai'}
@@ -153,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         noGuests.style.display = 'none';
-        tbody.innerHTML = filtered.map((r, i) => `
+        tbody.innerHTML = filtered.map(r => `
             <tr>
                 <td><strong>${escapeHtml(r.name || 'Sem nome')}</strong></td>
                 <td>${escapeHtml(r.phone || '-')}</td>
@@ -163,9 +161,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${r.attendance === 'sim' ? 'Confirmado' : 'Não vai'}
                     </span>
                 </td>
-                <td style="font-size:0.78rem;color:var(--text-light);">${formatDate(r.date)}</td>
+                <td style="font-size:0.78rem;color:var(--text-light);">${formatDate(r.created_at || r.date)}</td>
                 <td>
-                    <button class="delete-btn" data-index="${i}" title="Remover">
+                    <button class="delete-btn" data-id="${r.id}" title="Remover">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
                     </button>
                 </td>
@@ -174,12 +172,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Delete handlers
         tbody.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const idx = parseInt(btn.dataset.index);
+            btn.addEventListener('click', async () => {
+                const id = parseInt(btn.dataset.id);
                 if (confirm('Tem a certeza que deseja remover este convidado?')) {
-                    const rsvps = getRSVPs();
-                    rsvps.splice(idx, 1);
-                    localStorage.setItem('wedding_rsvps', JSON.stringify(rsvps));
+                    await deleteRSVP(id);
                     loadDashboard();
                 }
             });
@@ -191,26 +187,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const filterSelect = document.getElementById('filterGuests');
 
     searchInput.addEventListener('input', () => {
-        loadGuestsTable(getRSVPs(), filterSelect.value, searchInput.value);
+        loadGuestsTable(rsvpsCache, filterSelect.value, searchInput.value);
     });
 
     filterSelect.addEventListener('change', () => {
-        loadGuestsTable(getRSVPs(), filterSelect.value, searchInput.value);
+        loadGuestsTable(rsvpsCache, filterSelect.value, searchInput.value);
     });
 
     // Export CSV
     document.getElementById('exportBtn').addEventListener('click', () => {
-        const rsvps = getRSVPs();
-        if (rsvps.length === 0) return alert('Não há dados para exportar.');
+        if (rsvpsCache.length === 0) return alert('Não há dados para exportar.');
 
         const headers = ['Nome', 'Telefone', 'Acompanhantes', 'Estado', 'Mensagem', 'Data'];
-        const rows = rsvps.map(r => [
+        const rows = rsvpsCache.map(r => [
             r.name || '',
             r.phone || '',
             r.guests || '0',
             r.attendance === 'sim' ? 'Confirmado' : 'Não vai',
             (r.message || '').replace(/"/g, '""'),
-            formatDate(r.date)
+            formatDate(r.created_at || r.date)
         ]);
 
         let csv = '\uFEFF' + headers.join(';') + '\n';
@@ -241,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="message-card">
                 <div class="mc-header">
                     <span class="mc-name">${escapeHtml(r.name || 'Anónimo')}</span>
-                    <span class="mc-date">${formatDate(r.date)}</span>
+                    <span class="mc-date">${formatDate(r.created_at || r.date)}</span>
                 </div>
                 <p class="mc-text">"${escapeHtml(r.message)}"</p>
             </div>
@@ -249,8 +244,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ---- Suggestions ----
-    function loadSuggestions() {
-        const suggestions = JSON.parse(localStorage.getItem('wedding_suggestions') || '[]');
+    async function loadSuggestions() {
+        const suggestions = await getSuggestions();
         const container = document.getElementById('suggestionsAdminList');
         const statEl = document.getElementById('statSuggestions');
 
@@ -261,11 +256,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        container.innerHTML = [...suggestions].reverse().map(s => `
+        container.innerHTML = suggestions.map(s => `
             <div class="suggestion-card">
                 <div class="sc-header">
                     <span class="sc-name">${escapeHtml(s.nome || 'Anónimo')}</span>
-                    <span class="sc-date">${formatDate(s.date)}</span>
+                    <span class="sc-date">${formatDate(s.created_at || s.date)}</span>
                 </div>
                 <div class="sc-items">
                     <div class="sc-category ${s.pratos ? '' : 'empty'}">
@@ -402,12 +397,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ---- Clear Data ----
-    document.getElementById('clearDataBtn').addEventListener('click', () => {
-        if (confirm('Tem a certeza? Todos os dados de confirmação serão apagados permanentemente.')) {
-            localStorage.removeItem('wedding_rsvps');
-            localStorage.removeItem('wedding_suggestions');
+    document.getElementById('clearDataBtn').addEventListener('click', async () => {
+        if (confirm('Tem a certeza? Todas as confirmações e sugestões serão apagadas permanentemente da base de dados.')) {
+            await clearAllData();
             localStorage.removeItem('wedding_menu');
-            loadDashboard();
+            await loadDashboard();
             alert('Todos os dados foram limpos.');
         }
     });
