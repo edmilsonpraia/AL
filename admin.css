@@ -482,6 +482,151 @@ body {
     }
 }
 
+/* ---- Admin Gallery ---- */
+.admin-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+.admin-gallery-item {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--white);
+    box-shadow: 0 2px 8px rgba(74,44,42,0.08);
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.admin-gallery-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(74,44,42,0.15);
+}
+
+.admin-gallery-item img,
+.admin-gallery-item video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.admin-gallery-item .ag-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+    padding: 24px 12px 10px;
+    color: white;
+    font-size: 0.72rem;
+}
+
+.admin-gallery-item .ag-name {
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+
+.admin-gallery-item .ag-date {
+    font-size: 0.65rem;
+    opacity: 0.75;
+}
+
+.admin-gallery-item .ag-type {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(8px);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lightbox-content img,
+.lightbox-content video {
+    max-width: 90vw;
+    max-height: 80vh;
+    border-radius: 8px;
+}
+
+.lightbox-caption {
+    color: white;
+    margin-top: 14px;
+    opacity: 0.7;
+    font-size: 0.85rem;
+}
+
+.lightbox-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.lightbox-actions button,
+.lightbox-actions a {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    border: none;
+    transition: all 0.3s;
+}
+
+.lightbox-actions .download-btn {
+    background: rgba(255,255,255,0.15);
+    color: white;
+}
+
+.lightbox-actions .download-btn:hover {
+    background: rgba(255,255,255,0.25);
+}
+
+.lightbox-actions .delete-media-btn {
+    background: var(--red);
+    color: white;
+}
+
+.lightbox-actions .delete-media-btn:hover {
+    opacity: 0.85;
+}
+
 /* ---- Recent List ---- */
 .recent-section h3 {
     font-family: 'Cormorant Garamond', serif;

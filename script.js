@@ -353,6 +353,159 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // ---- Gallery Upload ----
+    const uploadArea = document.getElementById('uploadArea');
+    const mediaInput = document.getElementById('mediaInput');
+    const uploaderName = document.getElementById('uploaderName');
+    const uploadProgress = document.getElementById('uploadProgress');
+    const progressText = document.getElementById('progressText');
+    const progressCount = document.getElementById('progressCount');
+    const progressFill = document.getElementById('progressFill');
+    const galleryGrid = document.getElementById('galleryGrid');
+    const galleryEmpty = document.getElementById('galleryEmpty');
+    const galleryStats = document.getElementById('galleryStats');
+    const galleryCount = document.getElementById('galleryCount');
+
+    if (uploadArea && mediaInput) {
+        // Drag & drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        mediaInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        async function handleFiles(files) {
+            if (!files || files.length === 0) return;
+
+            const validFiles = Array.from(files).filter(f =>
+                f.type.startsWith('image/') || f.type.startsWith('video/')
+            );
+
+            if (validFiles.length === 0) {
+                alert('Por favor seleccione apenas imagens ou vídeos.');
+                return;
+            }
+
+            const guestName = uploaderName.value.trim() ||
+                localStorage.getItem('wedding_confirmed_guest') ||
+                'Anónimo';
+
+            uploadProgress.style.display = 'block';
+            let success = 0;
+            let failed = 0;
+
+            for (let i = 0; i < validFiles.length; i++) {
+                const file = validFiles[i];
+                progressText.textContent = `A carregar ${file.name}...`;
+                progressCount.textContent = `${i + 1}/${validFiles.length}`;
+                progressFill.style.width = `${((i) / validFiles.length) * 100}%`;
+
+                const result = await uploadMedia(file, guestName);
+                if (result.success) success++;
+                else failed++;
+            }
+
+            progressFill.style.width = '100%';
+            progressText.textContent = failed === 0
+                ? `${success} ficheiro(s) carregado(s) com sucesso!`
+                : `${success} carregado(s), ${failed} falharam.`;
+
+            setTimeout(() => {
+                uploadProgress.style.display = 'none';
+                progressFill.style.width = '0%';
+            }, 2500);
+
+            mediaInput.value = '';
+            await loadGallery();
+        }
+    }
+
+    async function loadGallery() {
+        if (!galleryGrid) return;
+        const media = await getMedia();
+
+        if (media.length === 0) {
+            galleryGrid.innerHTML = '';
+            galleryEmpty.style.display = 'block';
+            galleryStats.style.display = 'none';
+            return;
+        }
+
+        galleryEmpty.style.display = 'none';
+        galleryStats.style.display = 'block';
+        galleryCount.textContent = `${media.length} memória${media.length !== 1 ? 's' : ''} partilhada${media.length !== 1 ? 's' : ''}`;
+
+        galleryGrid.innerHTML = media.map((m, i) => {
+            const isVideo = m.file_type === 'video';
+            const safeName = (m.uploaded_by || 'Anónimo').replace(/[<>"]/g, '');
+            return `
+                <div class="gallery-item" data-index="${i}">
+                    ${isVideo
+                        ? `<video src="${m.file_url}" muted preload="metadata"></video>
+                           <div class="video-badge">
+                               <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                               Vídeo
+                           </div>`
+                        : `<img src="${m.file_url}" alt="${safeName}" loading="lazy">`
+                    }
+                    <div class="uploader-tag">${safeName}</div>
+                </div>
+            `;
+        }).join('');
+
+        // Click to open lightbox
+        galleryGrid.querySelectorAll('.gallery-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const idx = parseInt(item.dataset.index);
+                openLightbox(media[idx]);
+            });
+        });
+    }
+
+    // Lightbox
+    const lightbox = document.getElementById('lightbox');
+    const lightboxContent = document.getElementById('lightboxContent');
+    const lightboxCaption = document.getElementById('lightboxCaption');
+    const lightboxClose = document.getElementById('lightboxClose');
+
+    function openLightbox(media) {
+        const isVideo = media.file_type === 'video';
+        lightboxContent.innerHTML = isVideo
+            ? `<video src="${media.file_url}" controls autoplay></video>`
+            : `<img src="${media.file_url}" alt="">`;
+        lightboxCaption.textContent = media.uploaded_by ? `Por ${media.uploaded_by}` : '';
+        lightbox.style.display = 'flex';
+    }
+
+    if (lightboxClose) {
+        lightboxClose.addEventListener('click', closeLightbox);
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) closeLightbox();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.style.display === 'flex') closeLightbox();
+        });
+    }
+
+    function closeLightbox() {
+        lightbox.style.display = 'none';
+        lightboxContent.innerHTML = '';
+    }
+
+    // Initial load
+    loadGallery();
+
     // ---- Smooth scroll ----
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', (e) => {

@@ -85,7 +85,92 @@ document.addEventListener('DOMContentLoaded', () => {
         loadGuestsTable(rsvpsCache);
         loadMessages(rsvpsCache);
         await loadSuggestions();
+        await loadAdminGallery();
         loadMenuItems();
+    }
+
+    // ---- Admin Gallery ----
+    async function loadAdminGallery() {
+        const grid = document.getElementById('adminGalleryGrid');
+        const empty = document.getElementById('adminGalleryEmpty');
+        const statEl = document.getElementById('statMedia');
+        if (!grid) return;
+
+        const media = await getMedia();
+        if (statEl) statEl.textContent = media.length;
+
+        if (media.length === 0) {
+            grid.innerHTML = '';
+            empty.style.display = 'block';
+            return;
+        }
+
+        empty.style.display = 'none';
+        grid.innerHTML = media.map((m, i) => {
+            const isVideo = m.file_type === 'video';
+            const safeName = escapeHtml(m.uploaded_by || 'Anónimo');
+            return `
+                <div class="admin-gallery-item" data-index="${i}">
+                    ${isVideo
+                        ? `<video src="${m.file_url}" muted preload="metadata"></video>`
+                        : `<img src="${m.file_url}" alt="${safeName}" loading="lazy">`
+                    }
+                    <div class="ag-type">${isVideo ? 'Vídeo' : 'Foto'}</div>
+                    <div class="ag-info">
+                        <div class="ag-name">${safeName}</div>
+                        <div class="ag-date">${formatDate(m.created_at)}</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        grid.querySelectorAll('.admin-gallery-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const idx = parseInt(item.dataset.index);
+                openAdminLightbox(media[idx]);
+            });
+        });
+    }
+
+    function openAdminLightbox(media) {
+        const lb = document.getElementById('adminLightbox');
+        const content = document.getElementById('adminLightboxContent');
+        const caption = document.getElementById('adminLightboxCaption');
+        const actions = document.getElementById('adminLightboxActions');
+
+        const isVideo = media.file_type === 'video';
+        content.innerHTML = isVideo
+            ? `<video src="${media.file_url}" controls autoplay></video>`
+            : `<img src="${media.file_url}" alt="">`;
+
+        caption.textContent = `Por ${media.uploaded_by || 'Anónimo'} · ${formatDate(media.created_at)}`;
+
+        actions.innerHTML = `
+            <a href="${media.file_url}" download="${media.file_name || 'media'}" target="_blank" class="download-btn">
+                Descarregar
+            </a>
+            <button class="delete-media-btn" id="deleteMediaBtn">
+                Apagar
+            </button>
+        `;
+
+        document.getElementById('deleteMediaBtn').addEventListener('click', async () => {
+            if (confirm('Apagar este ficheiro permanentemente?')) {
+                await deleteMedia(media.id, media.file_path);
+                lb.style.display = 'none';
+                await loadAdminGallery();
+            }
+        });
+
+        lb.style.display = 'flex';
+    }
+
+    const adminLightboxClose = document.getElementById('adminLightboxClose');
+    if (adminLightboxClose) {
+        adminLightboxClose.addEventListener('click', () => {
+            document.getElementById('adminLightbox').style.display = 'none';
+            document.getElementById('adminLightboxContent').innerHTML = '';
+        });
     }
 
     // ---- Stats ----

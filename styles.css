@@ -1545,6 +1545,281 @@ body {
     }
 }
 
+/* ---- Gallery Section ---- */
+.gallery-section {
+    background: linear-gradient(160deg, var(--espresso) 0%, var(--mocha-dark) 100%);
+    color: var(--white);
+}
+
+.gallery-section .section-header h2 {
+    color: var(--white);
+}
+
+.gallery-section .section-label {
+    color: var(--champagne);
+    opacity: 0.8;
+}
+
+.gallery-section .ornament-line {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.gallery-section .ornament-icon {
+    color: var(--champagne);
+}
+
+.gallery-intro {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto 36px;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.upload-block {
+    max-width: 700px;
+    margin: 0 auto 40px;
+}
+
+.uploader-name {
+    width: 100%;
+    padding: 14px 20px;
+    margin-bottom: 16px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.88rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    color: var(--white);
+    outline: none;
+    transition: border-color 0.3s, background 0.3s;
+}
+
+.uploader-name::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.uploader-name:focus {
+    border-color: var(--champagne);
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.upload-area {
+    display: block;
+    background: rgba(255, 255, 255, 0.06);
+    border: 2px dashed rgba(245, 230, 211, 0.3);
+    border-radius: 16px;
+    padding: 48px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.upload-area:hover,
+.upload-area.dragover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--champagne);
+    transform: scale(1.01);
+}
+
+.upload-prompt svg {
+    color: var(--champagne);
+    opacity: 0.8;
+    margin-bottom: 12px;
+}
+
+.upload-prompt h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 400;
+    margin-bottom: 6px;
+    color: var(--white);
+}
+
+.upload-prompt p {
+    font-size: 0.78rem;
+    opacity: 0.65;
+    color: var(--champagne);
+}
+
+.upload-progress {
+    margin-top: 16px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 14px 20px;
+    border-radius: 12px;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+    color: var(--champagne);
+}
+
+.progress-bar {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--champagne);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.gallery-stats {
+    text-align: center;
+    margin-bottom: 24px;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0.6;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.gallery-item {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gallery-item:hover {
+    transform: scale(1.03);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.gallery-item img,
+.gallery-item video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.gallery-item .video-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    color: var(--white);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.65rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.gallery-item .uploader-tag {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+    color: var(--white);
+    padding: 16px 10px 8px;
+    font-size: 0.7rem;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.gallery-item:hover .uploader-tag {
+    opacity: 1;
+}
+
+.gallery-empty {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+    font-style: italic;
+    padding: 40px 20px;
+}
+
+/* Lightbox */
+.lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 20px;
+    animation: fadeIn 0.3s ease;
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: var(--white);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s;
+}
+
+.lightbox-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.lightbox-content {
+    max-width: 95vw;
+    max-height: 85vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lightbox-content img,
+.lightbox-content video {
+    max-width: 100%;
+    max-height: 85vh;
+    border-radius: 8px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.lightbox-caption {
+    color: var(--white);
+    margin-top: 16px;
+    font-size: 0.85rem;
+    opacity: 0.7;
+}
+
+@media (max-width: 480px) {
+    .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+        gap: 6px;
+    }
+
+    .upload-area {
+        padding: 32px 16px;
+    }
+}
+
 /* ---- RSVP Section ---- */
 .rsvp {
     background: var(--cream);

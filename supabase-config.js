@@ -65,7 +65,74 @@ async function getSuggestions() {
     return data || [];
 }
 
+// ---- Media (Photos & Videos) API ----
+const MEDIA_BUCKET = 'wedding-media';
+
+async function uploadMedia(file, uploadedBy) {
+    // Generate unique filename
+    const ext = file.name.split('.').pop();
+    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}.${ext}`;
+    const filePath = fileName;
+
+    // Upload to storage
+    const { data: uploadData, error: uploadError } = await sb.storage
+        .from(MEDIA_BUCKET)
+        .upload(filePath, file, {
+            cacheControl: '3600',
+            upsert: false
+        });
+
+    if (uploadError) {
+        console.error('Upload error:', uploadError);
+        return { success: false, error: uploadError.message };
+    }
+
+    // Get public URL
+    const { data: urlData } = sb.storage.from(MEDIA_BUCKET).getPublicUrl(filePath);
+    const fileUrl = urlData.publicUrl;
+
+    // Insert metadata
+    const fileType = file.type.startsWith('video/') ? 'video' : 'image';
+    const { error: dbError } = await sb.from('media').insert([{
+        file_url: fileUrl,
+        file_path: filePath,
+        file_name: file.name,
+        file_type: fileType,
+        size: file.size,
+        uploaded_by: uploadedBy || 'Anónimo'
+    }]);
+
+    if (dbError) {
+        console.error('DB error:', dbError);
+        return { success: false, error: dbError.message };
+    }
+
+    return { success: true, url: fileUrl, type: fileType };
+}
+
+async function getMedia() {
+    const { data, error } = await sb
+        .from('media')
+        .select('*')
+        .order('created_at', { ascending: false });
+    if (error) {
+        console.error('Error loading media:', error);
+        return [];
+    }
+    return data || [];
+}
+
+async function deleteMedia(id, filePath) {
+    if (filePath) {
+        await sb.storage.from(MEDIA_BUCKET).remove([filePath]);
+    }
+    const { error } = await sb.from('media').delete().eq('id', id);
+    if (error) console.error('Error deleting media:', error);
+    return !error;
+}
+
 async function clearAllData() {
     await sb.from('rsvps').delete().neq('id', 0);
     await sb.from('suggestions').delete().neq('id', 0);
+    // Don't auto-delete media - too risky
 }

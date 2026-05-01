@@ -81,6 +81,7 @@
                 <li><a href="#contagem">Contagem</a></li>
                 <li><a href="#presentes">Presentes</a></li>
                 <li><a href="#sugestoes">Menu</a></li>
+                <li><a href="#galeria">Galeria</a></li>
                 <li><a href="#confirmar">Confirmar</a></li>
             </ul>
         </div>
@@ -480,6 +481,64 @@
                 </svg>
                 <h3>Obrigado pelas sugestões!</h3>
                 <p>Os noivos vão adorar as vossas ideias.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Galeria -->
+    <section id="galeria" class="section gallery-section">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">Memórias do</span>
+                <h2>Grande Dia</h2>
+                <div class="ornament">
+                    <div class="ornament-line"></div>
+                    <svg class="ornament-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                    <div class="ornament-line"></div>
+                </div>
+            </div>
+            <p class="gallery-intro reveal">Partilhem connosco as vossas fotografias e vídeos do nosso casamento! Cada momento é especial.</p>
+
+            <div class="upload-block reveal">
+                <input type="text" id="uploaderName" placeholder="O seu nome (opcional)" class="uploader-name">
+                <label class="upload-area" id="uploadArea" for="mediaInput">
+                    <input type="file" id="mediaInput" accept="image/*,video/*" multiple hidden>
+                    <div class="upload-prompt">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                        <h4>Toque ou arraste fotos e vídeos</h4>
+                        <p>Aceita imagens (JPG, PNG, HEIC) e vídeos (MP4, MOV)</p>
+                    </div>
+                </label>
+                <div class="upload-progress" id="uploadProgress" style="display:none;">
+                    <div class="progress-info">
+                        <span id="progressText">A carregar...</span>
+                        <span id="progressCount">0/0</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-stats reveal" id="galleryStats" style="display:none;">
+                <span id="galleryCount">0 memórias partilhadas</span>
+            </div>
+            <div class="gallery-grid" id="galleryGrid"></div>
+            <p class="gallery-empty" id="galleryEmpty">Ainda não há memórias partilhadas. Seja o primeiro!</p>
+
+            <!-- Lightbox -->
+            <div class="lightbox" id="lightbox" style="display:none;">
+                <button class="lightbox-close" id="lightboxClose" aria-label="Fechar">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+                <div class="lightbox-content" id="lightboxContent"></div>
+                <p class="lightbox-caption" id="lightboxCaption"></p>
             </div>
         </div>
     </section>
