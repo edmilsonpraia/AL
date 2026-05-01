@@ -74,8 +74,8 @@ async function uploadMedia(file, uploadedBy) {
     const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}.${ext}`;
     const filePath = fileName;
 
-    // Upload to storage
-    const { data: uploadData, error: uploadError } = await sb.storage
+    // Upload to private storage
+    const { error: uploadError } = await sb.storage
         .from(MEDIA_BUCKET)
         .upload(filePath, file, {
             cacheControl: '3600',
@@ -87,14 +87,10 @@ async function uploadMedia(file, uploadedBy) {
         return { success: false, error: uploadError.message };
     }
 
-    // Get public URL
-    const { data: urlData } = sb.storage.from(MEDIA_BUCKET).getPublicUrl(filePath);
-    const fileUrl = urlData.publicUrl;
-
-    // Insert metadata
+    // Insert metadata only (no URL - we generate signed URLs on demand)
     const fileType = file.type.startsWith('video/') ? 'video' : 'image';
     const { error: dbError } = await sb.from('media').insert([{
-        file_url: fileUrl,
+        file_url: '',  // Not used - signed URLs generated on read
         file_path: filePath,
         file_name: file.name,
         file_type: fileType,
@@ -107,19 +103,44 @@ async function uploadMedia(file, uploadedBy) {
         return { success: false, error: dbError.message };
     }
 
-    return { success: true, url: fileUrl, type: fileType };
+    return { success: true, type: fileType };
 }
 
-async function getMedia() {
+// Generate signed URLs for media files (expires after specified seconds, default 1 hour)
+async function getMedia(expiresIn = 3600) {
     const { data, error } = await sb
         .from('media')
         .select('*')
         .order('created_at', { ascending: false });
+
     if (error) {
         console.error('Error loading media:', error);
         return [];
     }
-    return data || [];
+
+    if (!data || data.length === 0) return [];
+
+    // Batch create signed URLs for all files
+    const filePaths = data.map(m => m.file_path);
+    const { data: signedData, error: signedError } = await sb.storage
+        .from(MEDIA_BUCKET)
+        .createSignedUrls(filePaths, expiresIn);
+
+    if (signedError) {
+        console.error('Error generating signed URLs:', signedError);
+        return data;
+    }
+
+    // Map signed URLs back to media records
+    const urlMap = {};
+    signedData.forEach(s => {
+        urlMap[s.path] = s.signedUrl;
+    });
+
+    return data.map(m => ({
+        ...m,
+        file_url: urlMap[m.file_path] || ''
+    }));
 }
 
 async function deleteMedia(id, filePath) {
