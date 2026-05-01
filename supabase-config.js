@@ -5,12 +5,12 @@
 const SUPABASE_URL = 'https://wueqkveqgyryvrfgejzc.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_5W28iBxr3RaFG4zHIFYQkw_FjCdqKEc';
 
-// Initialize Supabase client (loaded from CDN)
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// Initialize Supabase client (use the global from CDN, then create our client)
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ---- RSVP API ----
 async function saveRSVP(data) {
-    const { error } = await supabase.from('rsvps').insert([{
+    const { error } = await sb.from('rsvps').insert([{
         name: data.name || null,
         phone: data.phone || null,
         guests: parseInt(data.guests) || 0,
@@ -24,7 +24,7 @@ async function saveRSVP(data) {
 }
 
 async function getRSVPs() {
-    const { data, error } = await supabase
+    const { data, error } = await sb
         .from('rsvps')
         .select('*')
         .order('created_at', { ascending: false });
@@ -36,14 +36,14 @@ async function getRSVPs() {
 }
 
 async function deleteRSVP(id) {
-    const { error } = await supabase.from('rsvps').delete().eq('id', id);
+    const { error } = await sb.from('rsvps').delete().eq('id', id);
     if (error) console.error('Error deleting RSVP:', error);
     return !error;
 }
 
 // ---- Suggestions API ----
 async function saveSuggestion(data) {
-    const { error } = await supabase.from('suggestions').insert([{
+    const { error } = await sb.from('suggestions').insert([{
         nome: data.nome || 'Anónimo',
         pratos: data.pratos || null,
         sobremesas: data.sobremesas || null,
@@ -54,7 +54,7 @@ async function saveSuggestion(data) {
 }
 
 async function getSuggestions() {
-    const { data, error } = await supabase
+    const { data, error } = await sb
         .from('suggestions')
         .select('*')
         .order('created_at', { ascending: false });
@@ -66,6 +66,6 @@ async function getSuggestions() {
 }
 
 async function clearAllData() {
-    await supabase.from('rsvps').delete().neq('id', 0);
-    await supabase.from('suggestions').delete().neq('id', 0);
+    await sb.from('rsvps').delete().neq('id', 0);
+    await sb.from('suggestions').delete().neq('id', 0);
 }
