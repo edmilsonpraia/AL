@@ -499,7 +499,7 @@
                     <div class="ornament-line"></div>
                 </div>
             </div>
-            <p class="gallery-intro reveal">Partilhem connosco as vossas fotografias e vídeos do nosso casamento! Cada momento é especial.</p>
+            <p class="gallery-intro reveal">Partilhem connosco as vossas fotografias e vídeos do nosso casamento! Os noivos farão um álbum especial com todas as memórias.</p>
 
             <div class="upload-block reveal">
                 <input type="text" id="uploaderName" placeholder="O seu nome (opcional)" class="uploader-name">
@@ -524,21 +524,12 @@
                         <div class="progress-fill" id="progressFill"></div>
                     </div>
                 </div>
-            </div>
-
-            <div class="gallery-stats reveal" id="galleryStats" style="display:none;">
-                <span id="galleryCount">0 memórias partilhadas</span>
-            </div>
-            <div class="gallery-grid" id="galleryGrid"></div>
-            <p class="gallery-empty" id="galleryEmpty">Ainda não há memórias partilhadas. Seja o primeiro!</p>
-
-            <!-- Lightbox -->
-            <div class="lightbox" id="lightbox" style="display:none;">
-                <button class="lightbox-close" id="lightboxClose" aria-label="Fechar">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                </button>
-                <div class="lightbox-content" id="lightboxContent"></div>
-                <p class="lightbox-caption" id="lightboxCaption"></p>
+                <div class="upload-success" id="uploadSuccess" style="display:none;">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                    <p>Obrigado por partilhar! As suas memórias foram enviadas com sucesso.</p>
+                </div>
             </div>
         </div>
     </section>

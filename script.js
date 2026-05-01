@@ -361,10 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const progressText = document.getElementById('progressText');
     const progressCount = document.getElementById('progressCount');
     const progressFill = document.getElementById('progressFill');
-    const galleryGrid = document.getElementById('galleryGrid');
-    const galleryEmpty = document.getElementById('galleryEmpty');
-    const galleryStats = document.getElementById('galleryStats');
-    const galleryCount = document.getElementById('galleryCount');
+    const uploadSuccess = document.getElementById('uploadSuccess');
 
     if (uploadArea && mediaInput) {
         // Drag & drop
@@ -401,6 +398,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.getItem('wedding_confirmed_guest') ||
                 'Anónimo';
 
+            uploadSuccess.style.display = 'none';
             uploadProgress.style.display = 'block';
             let success = 0;
             let failed = 0;
@@ -424,87 +422,14 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 uploadProgress.style.display = 'none';
                 progressFill.style.width = '0%';
-            }, 2500);
+                if (success > 0) {
+                    uploadSuccess.style.display = 'flex';
+                }
+            }, 2000);
 
             mediaInput.value = '';
-            await loadGallery();
         }
     }
-
-    async function loadGallery() {
-        if (!galleryGrid) return;
-        const media = await getMedia();
-
-        if (media.length === 0) {
-            galleryGrid.innerHTML = '';
-            galleryEmpty.style.display = 'block';
-            galleryStats.style.display = 'none';
-            return;
-        }
-
-        galleryEmpty.style.display = 'none';
-        galleryStats.style.display = 'block';
-        galleryCount.textContent = `${media.length} memória${media.length !== 1 ? 's' : ''} partilhada${media.length !== 1 ? 's' : ''}`;
-
-        galleryGrid.innerHTML = media.map((m, i) => {
-            const isVideo = m.file_type === 'video';
-            const safeName = (m.uploaded_by || 'Anónimo').replace(/[<>"]/g, '');
-            return `
-                <div class="gallery-item" data-index="${i}">
-                    ${isVideo
-                        ? `<video src="${m.file_url}" muted preload="metadata"></video>
-                           <div class="video-badge">
-                               <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                               Vídeo
-                           </div>`
-                        : `<img src="${m.file_url}" alt="${safeName}" loading="lazy">`
-                    }
-                    <div class="uploader-tag">${safeName}</div>
-                </div>
-            `;
-        }).join('');
-
-        // Click to open lightbox
-        galleryGrid.querySelectorAll('.gallery-item').forEach(item => {
-            item.addEventListener('click', () => {
-                const idx = parseInt(item.dataset.index);
-                openLightbox(media[idx]);
-            });
-        });
-    }
-
-    // Lightbox
-    const lightbox = document.getElementById('lightbox');
-    const lightboxContent = document.getElementById('lightboxContent');
-    const lightboxCaption = document.getElementById('lightboxCaption');
-    const lightboxClose = document.getElementById('lightboxClose');
-
-    function openLightbox(media) {
-        const isVideo = media.file_type === 'video';
-        lightboxContent.innerHTML = isVideo
-            ? `<video src="${media.file_url}" controls autoplay></video>`
-            : `<img src="${media.file_url}" alt="">`;
-        lightboxCaption.textContent = media.uploaded_by ? `Por ${media.uploaded_by}` : '';
-        lightbox.style.display = 'flex';
-    }
-
-    if (lightboxClose) {
-        lightboxClose.addEventListener('click', closeLightbox);
-        lightbox.addEventListener('click', (e) => {
-            if (e.target === lightbox) closeLightbox();
-        });
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && lightbox.style.display === 'flex') closeLightbox();
-        });
-    }
-
-    function closeLightbox() {
-        lightbox.style.display = 'none';
-        lightboxContent.innerHTML = '';
-    }
-
-    // Initial load
-    loadGallery();
 
     // ---- Smooth scroll ----
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
