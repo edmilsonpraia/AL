@@ -116,6 +116,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         : `<img src="${m.file_url}" alt="${safeName}" loading="lazy">`
                     }
                     <div class="ag-type">${isVideo ? 'Vídeo' : 'Foto'}</div>
+                    <button class="ag-delete" data-id="${m.id}" data-path="${m.file_path}" title="Apagar">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                        </svg>
+                    </button>
                     <div class="ag-info">
                         <div class="ag-name">${safeName}</div>
                         <div class="ag-date">${formatDate(m.created_at)}</div>
@@ -125,9 +131,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }).join('');
 
         grid.querySelectorAll('.admin-gallery-item').forEach(item => {
-            item.addEventListener('click', () => {
+            item.addEventListener('click', (e) => {
+                if (e.target.closest('.ag-delete')) return;
                 const idx = parseInt(item.dataset.index);
                 openAdminLightbox(media[idx]);
+            });
+        });
+
+        grid.querySelectorAll('.ag-delete').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const id = parseInt(btn.dataset.id);
+                const path = btn.dataset.path;
+                if (confirm('Apagar este ficheiro permanentemente?')) {
+                    btn.disabled = true;
+                    await deleteMedia(id, path);
+                    await loadAdminGallery();
+                }
             });
         });
     }

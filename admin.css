@@ -536,7 +536,7 @@ body {
 .admin-gallery-item .ag-type {
     position: absolute;
     top: 8px;
-    right: 8px;
+    left: 8px;
     background: rgba(0,0,0,0.7);
     backdrop-filter: blur(8px);
     color: white;
@@ -545,6 +545,36 @@ body {
     font-size: 0.65rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+}
+
+.admin-gallery-item .ag-delete {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(192, 57, 43, 0.92);
+    backdrop-filter: blur(8px);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    z-index: 2;
+}
+
+.admin-gallery-item .ag-delete:hover {
+    background: var(--red);
+    transform: scale(1.1);
+}
+
+.admin-gallery-item .ag-delete:disabled {
+    opacity: 0.5;
+    cursor: wait;
 }
 
 .lightbox {
