@@ -1393,6 +1393,16 @@ body {
     opacity: 0.85;
 }
 
+.brinde-card.premium::before {
+    background: linear-gradient(90deg, #8b5e3c, #c9a063, #8b5e3c);
+    opacity: 0.9;
+}
+
+.brinde-card.decor::before {
+    background: linear-gradient(90deg, #6b4e7d, #a883b8, #6b4e7d);
+    opacity: 0.85;
+}
+
 .brinde-badge {
     position: absolute;
     top: 14px;
@@ -1415,6 +1425,43 @@ body {
 .opportunity-badge {
     background: var(--espresso);
     color: var(--champagne);
+}
+
+.category-badge {
+    background: var(--mocha-dark);
+    color: var(--champagne);
+}
+
+.premium-badge {
+    background: #8b5e3c;
+    color: #fff;
+}
+
+.decor-badge {
+    background: #6b4e7d;
+    color: #fff;
+}
+
+.brinde-card.premium .brinde-offer-btn {
+    background: #8b5e3c;
+    border-color: #8b5e3c;
+    color: #fff;
+}
+
+.brinde-card.premium .brinde-offer-btn:hover {
+    background: #6f482b;
+    border-color: #6f482b;
+}
+
+.brinde-card.decor .brinde-offer-btn {
+    background: #6b4e7d;
+    border-color: #6b4e7d;
+    color: #fff;
+}
+
+.brinde-card.decor .brinde-offer-btn:hover {
+    background: #553e64;
+    border-color: #553e64;
 }
 
 .brinde-header h3 {
