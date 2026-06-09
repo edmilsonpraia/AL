@@ -320,6 +320,89 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // ---- Brindes (Gift Selection) ----
+    const brindeModalOverlay = document.getElementById('brindeModalOverlay');
+    const brindeModalClose = document.getElementById('brindeModalClose');
+    const brindeForm = document.getElementById('brindeForm');
+    const brindeModalSuccess = document.getElementById('brindeModalSuccess');
+
+    function openBrindeModal(card) {
+        const id = card.dataset.brindeId;
+        const nome = card.dataset.brindeNome;
+        const preco = card.dataset.brindePreco || '';
+
+        document.getElementById('brindeModalNome').textContent = nome;
+        document.getElementById('brindeModalPreco').textContent = preco;
+        document.getElementById('brindeIdHidden').value = id;
+        document.getElementById('brindeNomeHidden').value = nome;
+        document.getElementById('brindePrecoHidden').value = preco;
+
+        // Pre-fill name if already confirmed RSVP
+        const savedName = localStorage.getItem('wedding_confirmed_guest');
+        if (savedName) {
+            document.getElementById('brindeNome').value = savedName;
+        }
+
+        brindeForm.style.display = 'block';
+        brindeModalSuccess.style.display = 'none';
+        brindeModalOverlay.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeBrindeModal() {
+        brindeModalOverlay.style.display = 'none';
+        document.body.style.overflow = '';
+        brindeForm.reset();
+    }
+
+    document.querySelectorAll('.brinde-offer-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const card = btn.closest('.brinde-card');
+            if (card) openBrindeModal(card);
+        });
+    });
+
+    if (brindeModalClose) {
+        brindeModalClose.addEventListener('click', closeBrindeModal);
+    }
+
+    if (brindeModalOverlay) {
+        brindeModalOverlay.addEventListener('click', (e) => {
+            if (e.target === brindeModalOverlay) closeBrindeModal();
+        });
+    }
+
+    if (brindeForm) {
+        brindeForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = brindeForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'A enviar...';
+
+            const ok = await saveBrindeSelection({
+                brinde_id: document.getElementById('brindeIdHidden').value,
+                brinde_nome: document.getElementById('brindeNomeHidden').value,
+                brinde_preco: document.getElementById('brindePrecoHidden').value,
+                nome: document.getElementById('brindeNome').value.trim(),
+                telefone: document.getElementById('brindeTelefone').value.trim(),
+                mensagem: document.getElementById('brindeMensagem').value.trim()
+            });
+
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Confirmar oferta';
+
+            if (ok) {
+                brindeForm.style.display = 'none';
+                brindeModalSuccess.style.display = 'block';
+                launchConfetti();
+                setTimeout(closeBrindeModal, 3500);
+            } else {
+                alert('Não foi possível registar a sua escolha. Por favor, tente novamente.');
+            }
+        });
+    }
+
     // ---- RSVP Form ----
     const rsvpForm = document.getElementById('rsvpForm');
     const rsvpSuccess = document.getElementById('rsvpSuccess');

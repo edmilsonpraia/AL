@@ -65,6 +65,38 @@ async function getSuggestions() {
     return data || [];
 }
 
+// ---- Brindes (Gift Selections) API ----
+async function saveBrindeSelection(data) {
+    const { error } = await sb.from('brindes_selecionados').insert([{
+        brinde_id: data.brinde_id,
+        brinde_nome: data.brinde_nome,
+        brinde_preco: data.brinde_preco || null,
+        nome: data.nome,
+        telefone: data.telefone || null,
+        mensagem: data.mensagem || null
+    }]);
+    if (error) console.error('Error saving brinde selection:', error);
+    return !error;
+}
+
+async function getBrindesSelecionados() {
+    const { data, error } = await sb
+        .from('brindes_selecionados')
+        .select('*')
+        .order('created_at', { ascending: false });
+    if (error) {
+        console.error('Error loading brindes selections:', error);
+        return [];
+    }
+    return data || [];
+}
+
+async function deleteBrindeSelection(id) {
+    const { error } = await sb.from('brindes_selecionados').delete().eq('id', id);
+    if (error) console.error('Error deleting brinde selection:', error);
+    return !error;
+}
+
 // ---- Media (Photos & Videos) API ----
 const MEDIA_BUCKET = 'wedding-media';
 

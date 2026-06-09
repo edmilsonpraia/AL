@@ -85,8 +85,83 @@ document.addEventListener('DOMContentLoaded', () => {
         loadGuestsTable(rsvpsCache);
         loadMessages(rsvpsCache);
         await loadSuggestions();
+        await loadBrindes();
         await loadAdminGallery();
         loadMenuItems();
+    }
+
+    // ---- Brindes (Gift Selections) ----
+    async function loadBrindes() {
+        const list = document.getElementById('brindesAdminList');
+        const summary = document.getElementById('brindesSummary');
+        const statTotal = document.getElementById('statBrindes');
+        const statUnique = document.getElementById('statBrindesUnicos');
+        if (!list) return;
+
+        const brindes = await getBrindesSelecionados();
+
+        if (statTotal) statTotal.textContent = brindes.length;
+        if (statUnique) {
+            const unique = new Set(brindes.map(b => b.brinde_id)).size;
+            statUnique.textContent = unique;
+        }
+
+        if (brindes.length === 0) {
+            list.innerHTML = '<p class="empty-state" style="padding:20px;">Sem ofertas registadas.</p>';
+            summary.innerHTML = '<p class="empty-state" style="padding:20px;">Ainda ninguém escolheu um brinde.</p>';
+            return;
+        }
+
+        // Aggregate by brinde
+        const groups = {};
+        brindes.forEach(b => {
+            const key = b.brinde_id || 'sem-id';
+            if (!groups[key]) {
+                groups[key] = { nome: b.brinde_nome, preco: b.brinde_preco, count: 0, givers: [] };
+            }
+            groups[key].count++;
+            groups[key].givers.push(b.nome);
+        });
+
+        summary.innerHTML = Object.values(groups)
+            .sort((a, b) => b.count - a.count)
+            .map(g => `
+                <div class="brinde-summary-row">
+                    <div class="bs-info">
+                        <div class="bs-nome">${escapeHtml(g.nome || 'Sem nome')}</div>
+                        <div class="bs-preco">${escapeHtml(g.preco || '')}</div>
+                        <div class="bs-givers">${g.givers.map(n => escapeHtml(n)).join(' &middot; ')}</div>
+                    </div>
+                    <div class="bs-count"><span>${g.count}</span> oferta${g.count > 1 ? 's' : ''}</div>
+                </div>
+            `).join('');
+
+        list.innerHTML = brindes.map(b => `
+            <div class="brinde-offer-row">
+                <div class="bo-main">
+                    <div class="bo-top">
+                        <span class="bo-giver">${escapeHtml(b.nome || 'Anónimo')}</span>
+                        <span class="bo-date">${formatDate(b.created_at)}</span>
+                    </div>
+                    <div class="bo-brinde">${escapeHtml(b.brinde_nome || '')} <span class="bo-preco">${escapeHtml(b.brinde_preco || '')}</span></div>
+                    ${b.telefone ? `<div class="bo-tel">Tel: ${escapeHtml(b.telefone)}</div>` : ''}
+                    ${b.mensagem ? `<div class="bo-msg">"${escapeHtml(b.mensagem)}"</div>` : ''}
+                </div>
+                <button class="delete-btn" data-brinde-id="${b.id}" title="Remover">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                </button>
+            </div>
+        `).join('');
+
+        list.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const id = parseInt(btn.dataset.brindeId);
+                if (confirm('Remover esta oferta de brinde?')) {
+                    await deleteBrindeSelection(id);
+                    await loadBrindes();
+                }
+            });
+        });
     }
 
     // ---- Admin Gallery ----
