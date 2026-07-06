@@ -26,86 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => container.remove(), 5000);
     }
 
-    // ---- Welcome Modal ----
-    const welcomeOverlay = document.getElementById('welcomeOverlay');
-    const welcomeForm = document.getElementById('welcomeForm');
-    const welcomeDecline = document.getElementById('welcomeDecline');
-    const welcomeGuestsRow = document.getElementById('welcomeGuestsRow');
-
-    // Check if already confirmed - skip modal
-    const confirmedGuest = localStorage.getItem('wedding_confirmed_guest');
-    if (confirmedGuest) {
-        welcomeOverlay.remove();
-    }
-
-    // Show/hide guests field based on "nossa" selection
-    document.querySelectorAll('input[name="welcomeType"]').forEach(radio => {
-        radio.addEventListener('change', () => {
-            welcomeGuestsRow.style.display = radio.value === 'nossa' && radio.checked ? 'flex' : 'none';
-        });
-    });
-
-    function closeWelcomeModal() {
-        welcomeOverlay.classList.add('closing');
-        setTimeout(() => {
-            welcomeOverlay.remove();
-        }, 500);
-    }
-
-    // Confirm attendance - allows entry to the site
-    welcomeForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const guestName = document.getElementById('welcomeName').value.trim();
-        const type = document.querySelector('input[name="welcomeType"]:checked').value;
-        const guests = type === 'nossa' ? document.getElementById('welcomeGuests').value : 0;
-
-        // Save to Supabase
-        await saveRSVP({
-            name: guestName,
-            attendance: 'sim',
-            type: type,
-            guests: guests,
-            source: 'welcome'
-        });
-
-        // Save confirmation locally so modal won't show again
-        localStorage.setItem('wedding_confirmed_guest', guestName);
-
-        // Pre-fill the RSVP form too
-        const nameInput = document.getElementById('name');
-        if (nameInput) nameInput.value = guestName;
-        const guestsInput = document.getElementById('guests');
-        if (guestsInput) guestsInput.value = guests;
-        const attendanceSelect = document.getElementById('attendance');
-        if (attendanceSelect) attendanceSelect.value = 'sim';
-
-        closeWelcomeModal();
-        launchConfetti();
-    });
-
-    // Decline - show a thank you message, site stays blocked
-    welcomeDecline.addEventListener('click', async () => {
-        const guestName = document.getElementById('welcomeName').value.trim();
-        if (guestName) {
-            await saveRSVP({
-                name: guestName,
-                attendance: 'nao',
-                source: 'welcome'
-            });
-        }
-
-        const modal = document.getElementById('welcomeModal');
-        modal.innerHTML = `
-            <div class="welcome-ornament">
-                <img src="logo.png" alt="L&A" class="welcome-monogram">
-            </div>
-            <h2 class="welcome-names" style="margin-bottom:16px;">Obrigado!</h2>
-            <p class="welcome-text" style="margin-bottom:8px;">Lamentamos que não possa estar presente.</p>
-            <p class="welcome-text">Desejamos-lhe tudo de bom!</p>
-            <div class="welcome-verse" style="margin-top:24px;">"Onde você for, irei; onde você ficar, ficarei." <em>- Rute 1:16</em></div>
-        `;
-    });
-
     // ---- Floating Particles ----
     const particlesContainer = document.querySelector('.particles-container');
     if (particlesContainer) {
@@ -403,39 +323,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ---- RSVP Form ----
-    const rsvpForm = document.getElementById('rsvpForm');
-    const rsvpSuccess = document.getElementById('rsvpSuccess');
-
-    if (rsvpForm) {
-        rsvpForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const formData = {
-                name: document.getElementById('name').value,
-                phone: document.getElementById('phone').value,
-                guests: document.getElementById('guests').value,
-                attendance: document.getElementById('attendance').value,
-                message: document.getElementById('message').value,
-                source: 'rsvp_form'
-            };
-
-            await saveRSVP(formData);
-
-            if (formData.attendance === 'sim') {
-                localStorage.setItem('wedding_confirmed_guest', formData.name);
-            }
-
-            rsvpForm.style.display = 'none';
-            rsvpSuccess.style.display = 'block';
-            rsvpSuccess.style.animation = 'fadeInUp 0.6s ease forwards';
-
-            if (formData.attendance === 'sim') {
-                launchConfetti();
-            }
-        });
-    }
-
     // ---- Gallery Upload ----
     const uploadArea = document.getElementById('uploadArea');
     const mediaInput = document.getElementById('mediaInput');
@@ -544,7 +431,8 @@ document.addEventListener('DOMContentLoaded', () => {
         dresscode: 'Traje elegante — tente ofuscar os noivos! Tons terrosos, champagne e dourado são bem-vindos. O tema da festa é "Viagem Gastronómica".',
         presentes: 'Há lista de presentes em loja física ou online, ou podem contribuir para a lua de mel por IBAN (BFA - Lisandra Patrícia da Silva F. de Lemos).',
         ibans: 'AKZ: AO06 0006 0000 5402865630151 | USD: AO06 0006 0000 5402865631121 | EUR: AO06 0006 0000 5402865631218',
-        confirmar: 'Podem confirmar a presença até 15 de Julho de 2026, preenchendo o formulário na secção "Confirmar Presença" do site.',
+        confirmar: 'A lista de convidados já se encontra fechada e todas as presenças estão confirmadas. Contamos consigo no dia 15 de Agosto!',
+        brindes: 'Na secção "Brindes" pode escolher entre 27 sugestões (Vista Alegre, eletrodomésticos e decoração). Basta clicar em "Quero oferecer este brinde" no que desejar oferecer.',
         estacionamento: 'O Estaleiro Imbondeiro dispõe de estacionamento para os convidados.',
         criancas: 'Sim, as crianças são bem-vindas ao casamento!',
     };
@@ -582,6 +470,10 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             keywords: ['confirmar', 'confirmacao', 'rsvp', 'presenca'],
             reply: () => WEDDING_DATA.confirmar
+        },
+        {
+            keywords: ['brinde', 'brindes', 'vista alegre', 'oferecer brinde'],
+            reply: () => WEDDING_DATA.brindes
         },
         {
             keywords: ['estacionamento', 'parking', 'estacionar', 'carro'],
