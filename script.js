@@ -4,28 +4,6 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // ---- Confetti Effect ----
-    function launchConfetti() {
-        const container = document.createElement('div');
-        container.className = 'confetti-container';
-        document.body.appendChild(container);
-
-        const colors = ['#A47764', '#F5E6D3', '#C4A08E', '#8B6152', '#4A2C2A', '#e8c8b8'];
-        for (let i = 0; i < 80; i++) {
-            const piece = document.createElement('div');
-            piece.className = 'confetti-piece';
-            piece.style.left = Math.random() * 100 + '%';
-            piece.style.background = colors[Math.floor(Math.random() * colors.length)];
-            piece.style.animationDuration = (2 + Math.random() * 2) + 's';
-            piece.style.animationDelay = (Math.random() * 0.8) + 's';
-            piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
-            piece.style.transform = `rotate(${Math.random() * 360}deg)`;
-            container.appendChild(piece);
-        }
-
-        setTimeout(() => container.remove(), 5000);
-    }
-
     // ---- Floating Particles ----
     const particlesContainer = document.querySelector('.particles-container');
     if (particlesContainer) {
@@ -122,206 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
 
     revealElements.forEach(el => revealObserver.observe(el));
-
-    // ---- Countdown Timer ----
-    const weddingDate = new Date('2026-08-15T14:30:00').getTime();
-    let prevSeconds = -1;
-
-    function updateCountdown() {
-        const now = Date.now();
-        const diff = weddingDate - now;
-
-        if (diff <= 0) {
-            document.getElementById('days').textContent = '0';
-            document.getElementById('hours').textContent = '00';
-            document.getElementById('minutes').textContent = '00';
-            document.getElementById('seconds').textContent = '00';
-            return;
-        }
-
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-        document.getElementById('days').textContent = days;
-        document.getElementById('hours').textContent = String(hours).padStart(2, '0');
-        document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
-
-        const secEl = document.getElementById('seconds');
-        secEl.textContent = String(seconds).padStart(2, '0');
-
-        if (seconds !== prevSeconds) {
-            secEl.classList.remove('tick');
-            void secEl.offsetWidth;
-            secEl.classList.add('tick');
-            prevSeconds = seconds;
-        }
-    }
-
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
-
-    // ---- Copy IBAN buttons ----
-    document.querySelectorAll('.copy-btn[data-copy]').forEach(btn => {
-        btn.addEventListener('click', async () => {
-            const iban = btn.dataset.copy;
-            try {
-                await navigator.clipboard.writeText(iban);
-            } catch {
-                const ta = document.createElement('textarea');
-                ta.value = iban;
-                ta.style.position = 'fixed';
-                ta.style.opacity = '0';
-                document.body.appendChild(ta);
-                ta.select();
-                document.execCommand('copy');
-                document.body.removeChild(ta);
-            }
-            btn.classList.add('copied');
-            const origHTML = btn.innerHTML;
-            btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
-            setTimeout(() => {
-                btn.classList.remove('copied');
-                btn.innerHTML = origHTML;
-            }, 2000);
-        });
-    });
-
-    // ---- Suggestion Tags ----
-    document.querySelectorAll('.sg-tag').forEach(tag => {
-        tag.addEventListener('click', () => {
-            const targetId = tag.closest('.sg-tags').dataset.target;
-            const textarea = document.getElementById(targetId);
-            const item = tag.textContent.trim();
-
-            if (tag.classList.contains('selected')) {
-                // Remove from textarea
-                tag.classList.remove('selected');
-                const lines = textarea.value.split(', ').filter(l => l.trim() !== item);
-                textarea.value = lines.join(', ');
-            } else {
-                // Add to textarea
-                tag.classList.add('selected');
-                textarea.value = textarea.value
-                    ? textarea.value + ', ' + item
-                    : item;
-            }
-        });
-    });
-
-    // ---- Suggestions Form ----
-    const sugForm = document.getElementById('suggestionsForm');
-    const sugSuccess = document.getElementById('suggestionSuccess');
-
-    if (sugForm) {
-        sugForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const pratos = document.getElementById('sugPratos').value.trim();
-            const sobremesas = document.getElementById('sugSobremesas').value.trim();
-            const bebidas = document.getElementById('sugBebidas').value.trim();
-            const nome = document.getElementById('sugNome').value.trim();
-
-            if (!pratos && !sobremesas && !bebidas) {
-                alert('Por favor, preencha pelo menos uma sugestão.');
-                return;
-            }
-
-            await saveSuggestion({
-                nome: nome || 'Anónimo',
-                pratos,
-                sobremesas,
-                bebidas
-            });
-
-            sugForm.style.display = 'none';
-            sugSuccess.style.display = 'block';
-            sugSuccess.style.animation = 'fadeInUp 0.6s ease forwards';
-        });
-    }
-
-    // ---- Brindes (Gift Selection) ----
-    const brindeModalOverlay = document.getElementById('brindeModalOverlay');
-    const brindeModalClose = document.getElementById('brindeModalClose');
-    const brindeForm = document.getElementById('brindeForm');
-    const brindeModalSuccess = document.getElementById('brindeModalSuccess');
-
-    function openBrindeModal(card) {
-        const id = card.dataset.brindeId;
-        const nome = card.dataset.brindeNome;
-        const preco = card.dataset.brindePreco || '';
-
-        document.getElementById('brindeModalNome').textContent = nome;
-        document.getElementById('brindeModalPreco').textContent = preco;
-        document.getElementById('brindeIdHidden').value = id;
-        document.getElementById('brindeNomeHidden').value = nome;
-        document.getElementById('brindePrecoHidden').value = preco;
-
-        // Pre-fill name if already confirmed RSVP
-        const savedName = localStorage.getItem('wedding_confirmed_guest');
-        if (savedName) {
-            document.getElementById('brindeNome').value = savedName;
-        }
-
-        brindeForm.style.display = 'block';
-        brindeModalSuccess.style.display = 'none';
-        brindeModalOverlay.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeBrindeModal() {
-        brindeModalOverlay.style.display = 'none';
-        document.body.style.overflow = '';
-        brindeForm.reset();
-    }
-
-    document.querySelectorAll('.brinde-offer-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const card = btn.closest('.brinde-card');
-            if (card) openBrindeModal(card);
-        });
-    });
-
-    if (brindeModalClose) {
-        brindeModalClose.addEventListener('click', closeBrindeModal);
-    }
-
-    if (brindeModalOverlay) {
-        brindeModalOverlay.addEventListener('click', (e) => {
-            if (e.target === brindeModalOverlay) closeBrindeModal();
-        });
-    }
-
-    if (brindeForm) {
-        brindeForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const submitBtn = brindeForm.querySelector('button[type="submit"]');
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'A enviar...';
-
-            const ok = await saveBrindeSelection({
-                brinde_id: document.getElementById('brindeIdHidden').value,
-                brinde_nome: document.getElementById('brindeNomeHidden').value,
-                brinde_preco: document.getElementById('brindePrecoHidden').value,
-                nome: document.getElementById('brindeNome').value.trim(),
-                telefone: document.getElementById('brindeTelefone').value.trim(),
-                mensagem: document.getElementById('brindeMensagem').value.trim()
-            });
-
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Confirmar oferta';
-
-            if (ok) {
-                brindeForm.style.display = 'none';
-                brindeModalSuccess.style.display = 'block';
-                launchConfetti();
-                setTimeout(closeBrindeModal, 3500);
-            } else {
-                alert('Não foi possível registar a sua escolha. Por favor, tente novamente.');
-            }
-        });
-    }
 
     // ---- Gallery Upload ----
     const uploadArea = document.getElementById('uploadArea');
@@ -429,10 +207,8 @@ document.addEventListener('DOMContentLoaded', () => {
         cerimonia: 'Cerimónia civil às 14:30 seguida do copo d\'água',
         versiculo: '"Onde você for, irei; onde você ficar, ficarei." - Rute 1:16',
         dresscode: 'Traje elegante — tente ofuscar os noivos! Tons terrosos, champagne e dourado são bem-vindos. O tema da festa é "Viagem Gastronómica".',
-        presentes: 'Há lista de presentes em loja física ou online, ou podem contribuir para a lua de mel por IBAN (BFA - Lisandra Patrícia da Silva F. de Lemos).',
-        ibans: 'AKZ: AO06 0006 0000 5402865630151 | USD: AO06 0006 0000 5402865631121 | EUR: AO06 0006 0000 5402865631218',
         confirmar: 'A lista de convidados já se encontra fechada e todas as presenças estão confirmadas. Contamos consigo no dia 15 de Agosto!',
-        brindes: 'Na secção "Brindes" pode escolher entre 27 sugestões (Vista Alegre, eletrodomésticos e decoração). Basta clicar em "Quero oferecer este brinde" no que desejar oferecer.',
+        galeria: 'Na secção "Galeria" pode partilhar as suas fotografias e vídeos do casamento. Basta escrever o seu nome (opcional), tocar ou arrastar os ficheiros — os noivos farão um álbum especial com todas as memórias.',
         estacionamento: 'O Estaleiro Imbondeiro dispõe de estacionamento para os convidados.',
         criancas: 'Sim, as crianças são bem-vindas ao casamento!',
     };
@@ -452,28 +228,23 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         {
             keywords: ['onde', 'local', 'endereco', 'morada', 'localizacao', 'lugar', 'sitio'],
-            reply: () => `O casamento será no ${WEDDING_DATA.local}, localizado em ${WEDDING_DATA.endereco}. Pode ver a localização no mapa na secção "Cerimónia" do site.`
+            reply: () => `O casamento será no ${WEDDING_DATA.local}, localizado em ${WEDDING_DATA.endereco}.`
         },
         {
             keywords: ['roupa', 'vestir', 'dress', 'traje', 'dresscode', 'codigo'],
             reply: () => WEDDING_DATA.dresscode
         },
         {
-            keywords: ['presente', 'prenda', 'oferecer', 'lista', 'gift'],
-            reply: () => WEDDING_DATA.presentes
-        },
-        {
-            keywords: ['iban', 'transferencia', 'contribui', 'dinheiro', 'lua de mel', 'honeymoon'],
-            reply: () => `Podem contribuir para a lua de mel por transferência BFA (Lisandra Patrícia da Silva F. de Lemos):\n\n` +
-                `AKZ: AO06 0006 0000 5402865630151\nUSD: AO06 0006 0000 5402865631121\nEUR: AO06 0006 0000 5402865631218\n\nTambém pode copiar os IBANs na secção "Presentes" do site!`
-        },
-        {
             keywords: ['confirmar', 'confirmacao', 'rsvp', 'presenca'],
             reply: () => WEDDING_DATA.confirmar
         },
         {
-            keywords: ['brinde', 'brindes', 'vista alegre', 'oferecer brinde'],
-            reply: () => WEDDING_DATA.brindes
+            keywords: ['galeria', 'foto', 'video', 'partilhar', 'partilha', 'upload', 'carregar', 'album'],
+            reply: () => WEDDING_DATA.galeria
+        },
+        {
+            keywords: ['app', 'aplicacao', 'aplicativo', 'instalar', 'download', 'baixar', 'android', 'iphone', 'ios'],
+            reply: () => `Sim! Pode instalar o site como app no seu telemóvel. No Android verá o banner "Instalar App" — basta tocar. No iPhone, abra este site no Safari, toque em Partilhar e depois em "Adicionar ao Ecrã Principal".`
         },
         {
             keywords: ['estacionamento', 'parking', 'estacionar', 'carro'],
@@ -505,7 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         {
             keywords: ['menu', 'comida', 'jantar', 'comer', 'refeicao', 'alergia', 'vegetariano'],
-            reply: () => `O jantar será servido durante o copo d'água após a cerimónia. Se tiver alguma restrição alimentar ou alergia, por favor indique no formulário de confirmação.`
+            reply: () => `O jantar será servido durante o copo d'água após a cerimónia, com uma "Viagem Gastronómica" que celebra sabores de Angola e do mundo.`
         },
         {
             keywords: ['taxi', 'uber', 'transporte', 'como chegar', 'ir'],
@@ -559,9 +330,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const fallbacks = [
             `Obrigado pela pergunta! Para informações sobre o casamento de ${WEDDING_DATA.noivos}:\n\n` +
             `- Data: ${WEDDING_DATA.data}\n- Hora: ${WEDDING_DATA.horaCerimonia}\n- Local: ${WEDDING_DATA.local}, ${WEDDING_DATA.endereco}\n\n` +
-            `Pergunte-me sobre presentes, dresscode, confirmação, ou qualquer outro detalhe!`,
+            `Pergunte-me sobre o dresscode, a galeria de fotos, ou como instalar a app!`,
 
-            `Não tenho a certeza se entendi. Posso ajudar com:\n- Data e hora do casamento\n- Local e como chegar\n- Dresscode\n- Presentes e IBAN\n- Confirmação de presença\n\nO que gostaria de saber?`
+            `Não tenho a certeza se entendi. Posso ajudar com:\n- Data e hora do casamento\n- Local e como chegar\n- Dresscode\n- Galeria (partilhar fotos e vídeos)\n- Instalar como app\n\nO que gostaria de saber?`
         ];
 
         return fallbacks[Math.floor(Math.random() * fallbacks.length)];
@@ -668,5 +439,97 @@ document.addEventListener('DOMContentLoaded', () => {
             chatBadge.style.display = 'flex';
         }
     }, 3000);
+
+    // ========================================
+    // PWA - Install App (Android + iOS)
+    // ========================================
+
+    const installBanner = document.getElementById('installBanner');
+    const installBtn = document.getElementById('installBtn');
+    const installClose = document.getElementById('installClose');
+    const iosInstallModal = document.getElementById('iosInstallModal');
+    const iosInstallClose = document.getElementById('iosInstallClose');
+
+    let deferredPrompt = null;
+    const DISMISS_KEY = 'wedding_install_dismissed';
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+        || window.navigator.standalone === true;
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+    function showInstallBanner() {
+        if (isStandalone) return;
+        if (localStorage.getItem(DISMISS_KEY)) return;
+        if (!installBanner) return;
+        installBanner.style.display = 'flex';
+        requestAnimationFrame(() => installBanner.classList.add('visible'));
+    }
+
+    function hideInstallBanner() {
+        if (!installBanner) return;
+        installBanner.classList.remove('visible');
+        setTimeout(() => { installBanner.style.display = 'none'; }, 300);
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        setTimeout(showInstallBanner, 5000);
+    });
+
+    if (installBtn) {
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    localStorage.setItem(DISMISS_KEY, '1');
+                }
+                deferredPrompt = null;
+                hideInstallBanner();
+            } else if (isIOS) {
+                iosInstallModal.style.display = 'flex';
+                hideInstallBanner();
+            }
+        });
+    }
+
+    if (installClose) {
+        installClose.addEventListener('click', () => {
+            localStorage.setItem(DISMISS_KEY, '1');
+            hideInstallBanner();
+        });
+    }
+
+    if (iosInstallClose) {
+        iosInstallClose.addEventListener('click', () => {
+            iosInstallModal.style.display = 'none';
+        });
+    }
+
+    if (iosInstallModal) {
+        iosInstallModal.addEventListener('click', (e) => {
+            if (e.target === iosInstallModal) iosInstallModal.style.display = 'none';
+        });
+    }
+
+    // Show iOS banner (Safari has no beforeinstallprompt)
+    if (isIOS && !isStandalone && !localStorage.getItem(DISMISS_KEY)) {
+        setTimeout(showInstallBanner, 6000);
+    }
+
+    window.addEventListener('appinstalled', () => {
+        localStorage.setItem(DISMISS_KEY, '1');
+        hideInstallBanner();
+        deferredPrompt = null;
+    });
+
+    // Register service worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js').catch(err => {
+                console.warn('SW registration failed:', err);
+            });
+        });
+    }
 
 });

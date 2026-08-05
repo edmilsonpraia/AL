@@ -1,0 +1,27 @@
+{
+  "name": "Lisandra & Adilson - Casamento",
+  "short_name": "L & A",
+  "description": "Convite oficial do casamento de Lisandra & Adilson · 15 de Agosto de 2026",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FDF8F3",
+  "theme_color": "#A47764",
+  "lang": "pt-PT",
+  "categories": ["lifestyle", "photo", "social"],
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
