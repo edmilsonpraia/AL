@@ -208,6 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
         versiculo: '"Onde você for, irei; onde você ficar, ficarei." - Rute 1:16',
         dresscode: 'Traje elegante — tente ofuscar os noivos! Tons terrosos, champagne e dourado são bem-vindos. O tema da festa é "Viagem Gastronómica".',
         confirmar: 'A lista de convidados já se encontra fechada e todas as presenças estão confirmadas. Contamos consigo no dia 15 de Agosto!',
+        ticket: 'Na secção "O meu Ticket" pode gerar o seu ticket pessoal — basta escrever o seu nome. O ticket fica guardado no seu telemóvel e pode ser apresentado (impresso ou no ecrã) para levantar o brinde no dia do casamento.',
         galeria: 'Na secção "Galeria" pode partilhar as suas fotografias e vídeos do casamento. Basta escrever o seu nome (opcional), tocar ou arrastar os ficheiros — os noivos farão um álbum especial com todas as memórias.',
         estacionamento: 'O Estaleiro Imbondeiro dispõe de estacionamento para os convidados.',
         criancas: 'Sim, as crianças são bem-vindas ao casamento!',
@@ -237,6 +238,10 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             keywords: ['confirmar', 'confirmacao', 'rsvp', 'presenca'],
             reply: () => WEDDING_DATA.confirmar
+        },
+        {
+            keywords: ['ticket', 'bilhete', 'brinde', 'levantar', 'lembranca', 'lembrança', 'qr', 'codigo'],
+            reply: () => WEDDING_DATA.ticket
         },
         {
             keywords: ['galeria', 'foto', 'video', 'partilhar', 'partilha', 'upload', 'carregar', 'album'],
@@ -330,9 +335,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const fallbacks = [
             `Obrigado pela pergunta! Para informações sobre o casamento de ${WEDDING_DATA.noivos}:\n\n` +
             `- Data: ${WEDDING_DATA.data}\n- Hora: ${WEDDING_DATA.horaCerimonia}\n- Local: ${WEDDING_DATA.local}, ${WEDDING_DATA.endereco}\n\n` +
-            `Pergunte-me sobre o dresscode, a galeria de fotos, ou como instalar a app!`,
+            `Pergunte-me sobre o ticket de brinde, dresscode, galeria de fotos, ou como instalar a app!`,
 
-            `Não tenho a certeza se entendi. Posso ajudar com:\n- Data e hora do casamento\n- Local e como chegar\n- Dresscode\n- Galeria (partilhar fotos e vídeos)\n- Instalar como app\n\nO que gostaria de saber?`
+            `Não tenho a certeza se entendi. Posso ajudar com:\n- Data e hora do casamento\n- Local e como chegar\n- Dresscode\n- Ticket de Brinde\n- Galeria (partilhar fotos e vídeos)\n- Instalar como app\n\nO que gostaria de saber?`
         ];
 
         return fallbacks[Math.floor(Math.random() * fallbacks.length)];
@@ -439,6 +444,334 @@ document.addEventListener('DOMContentLoaded', () => {
             chatBadge.style.display = 'flex';
         }
     }, 3000);
+
+    // ========================================
+    // TICKET DE BRINDE (gerador + QR + persistência)
+    // ========================================
+
+    const TICKET_STORAGE_KEY = 'wedding_ticket_la2026';
+    const ticketForm = document.getElementById('ticketForm');
+    const ticketResult = document.getElementById('ticketResult');
+    const ticketNameInput = document.getElementById('ticketName');
+    const ticketPhoneInput = document.getElementById('ticketPhone');
+    const ticketGenerateBtn = document.getElementById('ticketGenerateBtn');
+    const ticketQrEl = document.getElementById('ticketQr');
+    const ticketDisplayName = document.getElementById('ticketDisplayName');
+    const ticketDisplayCode = document.getElementById('ticketDisplayCode');
+    const ticketDisplayDate = document.getElementById('ticketDisplayDate');
+    const ticketNewBtn = document.getElementById('ticketNewBtn');
+    const ticketShareBtn = document.getElementById('ticketShareBtn');
+    const ticketDownloadBtn = document.getElementById('ticketDownloadBtn');
+
+    function generateTicketCode() {
+        // Ex: LA-A7X9K2 (6 chars alphanumeric, no confusing chars)
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        let out = '';
+        for (let i = 0; i < 6; i++) {
+            out += chars[Math.floor(Math.random() * chars.length)];
+        }
+        return `LA-${out}`;
+    }
+
+    function formatTicketDate(iso) {
+        const d = new Date(iso);
+        return d.toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric' })
+            + ' · ' + d.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function renderTicket(ticket) {
+        if (!ticket || !ticketResult) return;
+
+        ticketDisplayName.textContent = ticket.name;
+        ticketDisplayCode.textContent = ticket.ticket_code;
+        ticketDisplayDate.textContent = formatTicketDate(ticket.created_at);
+
+        ticketQrEl.innerHTML = '<div class="qr-loading">A gerar QR...</div>';
+
+        if (window.QRCode && typeof window.QRCode.toDataURL === 'function') {
+            window.QRCode.toDataURL(ticket.ticket_code, {
+                width: 220,
+                margin: 1,
+                errorCorrectionLevel: 'M',
+                color: { dark: '#4A2C2A', light: '#FDF8F3' }
+            }).then((url) => {
+                ticketQrEl.innerHTML = `<img src="${url}" alt="QR ${ticket.ticket_code}">`;
+            }).catch((err) => {
+                console.error('QR error:', err);
+                ticketQrEl.innerHTML = `<div class="qr-fallback">${ticket.ticket_code}</div>`;
+            });
+        } else {
+            console.warn('QRCode lib not loaded — mostrar código como fallback');
+            ticketQrEl.innerHTML = `<div class="qr-fallback">${ticket.ticket_code}</div>`;
+        }
+
+        ticketForm.style.display = 'none';
+        ticketResult.style.display = 'block';
+    }
+
+    function showTicketForm() {
+        ticketResult.style.display = 'none';
+        ticketForm.style.display = 'flex';
+        ticketForm.reset();
+        ticketNameInput.focus();
+    }
+
+    // Restore ticket from localStorage on load
+    const savedTicketJSON = localStorage.getItem(TICKET_STORAGE_KEY);
+    if (savedTicketJSON) {
+        try {
+            renderTicket(JSON.parse(savedTicketJSON));
+        } catch {
+            localStorage.removeItem(TICKET_STORAGE_KEY);
+        }
+    }
+
+    if (ticketForm) {
+        ticketForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = ticketNameInput.value.trim();
+            const phone = ticketPhoneInput.value.trim();
+            if (!name) return;
+
+            ticketGenerateBtn.disabled = true;
+            const originalHTML = ticketGenerateBtn.innerHTML;
+            ticketGenerateBtn.innerHTML = '<span>A gerar...</span>';
+
+            // Try to insert with a few retries in case of code collision
+            let ticket = null;
+            for (let attempt = 0; attempt < 4 && !ticket; attempt++) {
+                const code = generateTicketCode();
+                ticket = await createTicket({ ticket_code: code, name, phone });
+            }
+
+            ticketGenerateBtn.disabled = false;
+            ticketGenerateBtn.innerHTML = originalHTML;
+
+            if (!ticket) {
+                alert('Não foi possível gerar o ticket. Verifique a sua ligação e tente novamente.');
+                return;
+            }
+
+            localStorage.setItem(TICKET_STORAGE_KEY, JSON.stringify(ticket));
+            renderTicket(ticket);
+        });
+    }
+
+    if (ticketNewBtn) {
+        ticketNewBtn.addEventListener('click', () => {
+            if (!confirm('Gerar um novo ticket? O ticket anterior continuará válido, mas este dispositivo passará a mostrar o novo.')) return;
+            localStorage.removeItem(TICKET_STORAGE_KEY);
+            showTicketForm();
+        });
+    }
+
+    function flashBtn(btn, msg) {
+        const orig = btn.innerHTML;
+        btn.classList.add('copied');
+        btn.innerHTML = msg;
+        setTimeout(() => {
+            btn.classList.remove('copied');
+            btn.innerHTML = orig;
+        }, 1800);
+    }
+
+    if (ticketShareBtn) {
+        ticketShareBtn.addEventListener('click', async () => {
+            const code = ticketDisplayCode.textContent;
+            const name = ticketDisplayName.textContent;
+            const text = `Ticket de Brinde · Casamento Lisandra & Adilson\nTitular: ${name}\nCódigo: ${code}`;
+
+            // Try Web Share (mobile) — HTTPS only
+            if (navigator.share) {
+                try { await navigator.share({ title: 'O meu Ticket · L & A', text }); return; }
+                catch { /* user cancelled or blocked */ }
+            }
+            // Try Clipboard API — HTTPS only
+            if (navigator.clipboard && window.isSecureContext) {
+                try {
+                    await navigator.clipboard.writeText(text);
+                    flashBtn(ticketShareBtn, 'Copiado!');
+                    return;
+                } catch { /* fall through */ }
+            }
+            // Fallback: legacy execCommand (works on file://)
+            try {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                const ok = document.execCommand('copy');
+                document.body.removeChild(ta);
+                if (ok) flashBtn(ticketShareBtn, 'Copiado!');
+                else alert('Copie manualmente:\n\n' + text);
+            } catch {
+                alert('Copie manualmente:\n\n' + text);
+            }
+        });
+    }
+
+    function loadImage(src) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.onerror = reject;
+            img.src = src;
+        });
+    }
+
+    async function generateQrDataUrl(code, size) {
+        if (!window.QRCode) throw new Error('QRCode library not loaded');
+        if (typeof window.QRCode.toDataURL === 'function') {
+            return await window.QRCode.toDataURL(code, {
+                width: size,
+                margin: 1,
+                errorCorrectionLevel: 'M',
+                color: { dark: '#4A2C2A', light: '#FDF8F3' }
+            });
+        }
+        if (typeof window.QRCode.toCanvas === 'function') {
+            const qrCanvas = document.createElement('canvas');
+            await new Promise((resolve, reject) => {
+                window.QRCode.toCanvas(qrCanvas, code, {
+                    width: size,
+                    margin: 1,
+                    errorCorrectionLevel: 'M',
+                    color: { dark: '#4A2C2A', light: '#FDF8F3' }
+                }, (err) => err ? reject(err) : resolve());
+            });
+            return qrCanvas.toDataURL('image/png');
+        }
+        throw new Error('QRCode API not available');
+    }
+
+    async function buildTicketExportCanvas(code, name, dateStr) {
+        const w = 720, h = 1000;
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+
+        // Background
+        ctx.fillStyle = '#FDF8F3';
+        ctx.fillRect(0, 0, w, h);
+
+        // Card border
+        ctx.strokeStyle = '#A47764';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(40, 40, w - 80, h - 80);
+
+        // Header band
+        ctx.fillStyle = '#4A2C2A';
+        ctx.fillRect(40, 40, w - 80, 130);
+
+        ctx.fillStyle = '#FDF8F3';
+        ctx.font = '600 52px "Cormorant Garamond", Georgia, serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('L & A', w / 2, 95);
+        ctx.font = '14px "Montserrat", Arial, sans-serif';
+        ctx.fillStyle = '#F5E6D3';
+        ctx.fillText('CASAMENTO · 15 AGOSTO 2026', w / 2, 140);
+
+        // Section label
+        ctx.fillStyle = '#A47764';
+        ctx.font = '400 13px "Montserrat", Arial, sans-serif';
+        ctx.fillText('TICKET DE BRINDE', w / 2, 210);
+
+        // QR — regenerate via toDataURL (most compatible) then draw
+        const qrSize = 340;
+        try {
+            const qrDataUrl = await generateQrDataUrl(code, qrSize);
+            const qrImg = await loadImage(qrDataUrl);
+            ctx.drawImage(qrImg, (w - qrSize) / 2, 250, qrSize, qrSize);
+        } catch (err) {
+            console.warn('QR generation failed, drawing fallback:', err);
+            ctx.strokeStyle = '#A47764';
+            ctx.lineWidth = 2;
+            ctx.strokeRect((w - qrSize) / 2, 250, qrSize, qrSize);
+            ctx.fillStyle = '#4A2C2A';
+            ctx.font = '600 24px "Courier New", monospace';
+            ctx.fillText(code, w / 2, 420);
+            ctx.font = '14px "Montserrat", Arial, sans-serif';
+            ctx.fillStyle = '#A47764';
+            ctx.fillText('(mostre este código no evento)', w / 2, 460);
+        }
+
+        // Titular
+        ctx.textBaseline = 'alphabetic';
+        ctx.fillStyle = '#A47764';
+        ctx.font = '400 12px "Montserrat", Arial, sans-serif';
+        ctx.fillText('TITULAR', w / 2, 650);
+
+        ctx.fillStyle = '#4A2C2A';
+        ctx.font = '400 30px "Cormorant Garamond", Georgia, serif';
+        ctx.fillText(name, w / 2, 685);
+
+        // Código
+        ctx.fillStyle = '#A47764';
+        ctx.font = '400 12px "Montserrat", Arial, sans-serif';
+        ctx.fillText('CÓDIGO', w / 2, 730);
+
+        ctx.font = '600 40px "Courier New", monospace';
+        ctx.fillStyle = '#8B6152';
+        ctx.fillText(code, w / 2, 780);
+
+        // Data
+        ctx.font = '13px "Montserrat", Arial, sans-serif';
+        ctx.fillStyle = '#9B8578';
+        ctx.fillText('Emitido em ' + dateStr, w / 2, 820);
+
+        // Divider (perforation)
+        ctx.strokeStyle = 'rgba(164,119,100,0.5)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([6, 6]);
+        ctx.beginPath();
+        ctx.moveTo(80, 860); ctx.lineTo(w - 80, 860);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Footer text
+        ctx.font = 'italic 18px "Cormorant Garamond", Georgia, serif';
+        ctx.fillStyle = '#6B4D3E';
+        ctx.fillText('Apresente este ticket no evento', w / 2, 908);
+        ctx.fillText('para levantar o seu brinde', w / 2, 938);
+
+        return canvas;
+    }
+
+    if (ticketDownloadBtn) {
+        ticketDownloadBtn.addEventListener('click', async () => {
+            ticketDownloadBtn.disabled = true;
+            const origHTML = ticketDownloadBtn.innerHTML;
+            ticketDownloadBtn.innerHTML = 'A gerar...';
+
+            try {
+                const canvas = await buildTicketExportCanvas(
+                    ticketDisplayCode.textContent,
+                    ticketDisplayName.textContent,
+                    ticketDisplayDate.textContent
+                );
+                const dataUrl = canvas.toDataURL('image/png');
+                const link = document.createElement('a');
+                link.download = `ticket-${ticketDisplayCode.textContent}.png`;
+                link.href = dataUrl;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                flashBtn(ticketDownloadBtn, 'Descarregado!');
+            } catch (err) {
+                console.error('Download error:', err);
+                alert('Não foi possível gerar a imagem. Tente fazer um screenshot ao ticket.');
+                ticketDownloadBtn.innerHTML = origHTML;
+            } finally {
+                ticketDownloadBtn.disabled = false;
+                if (ticketDownloadBtn.innerHTML === 'A gerar...') {
+                    ticketDownloadBtn.innerHTML = origHTML;
+                }
+            }
+        });
+    }
 
     // ========================================
     // PWA - Install App (Android + iOS)

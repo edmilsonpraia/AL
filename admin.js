@@ -86,8 +86,160 @@ document.addEventListener('DOMContentLoaded', () => {
         loadMessages(rsvpsCache);
         await loadSuggestions();
         await loadBrindes();
+        await loadTickets();
         await loadAdminGallery();
         loadMenuItems();
+    }
+
+    // ---- Tickets (Brinde do Casamento) ----
+    let ticketsCache = [];
+
+    async function loadTickets() {
+        const list = document.getElementById('ticketsAdminList');
+        const statTotal = document.getElementById('statTickets');
+        const statRedeemed = document.getElementById('statTicketsRedeemed');
+        const statPending = document.getElementById('statTicketsPending');
+        if (!list) return;
+
+        ticketsCache = await getTickets();
+
+        if (statTotal) statTotal.textContent = ticketsCache.length;
+        const redeemed = ticketsCache.filter(t => t.redeemed).length;
+        if (statRedeemed) statRedeemed.textContent = redeemed;
+        if (statPending) statPending.textContent = ticketsCache.length - redeemed;
+
+        renderTicketsList(ticketsCache);
+    }
+
+    function renderTicketsList(tickets) {
+        const list = document.getElementById('ticketsAdminList');
+        if (!list) return;
+
+        if (tickets.length === 0) {
+            list.innerHTML = '<p class="empty-state" style="padding:20px;">Ainda ninguém gerou um ticket.</p>';
+            return;
+        }
+
+        list.innerHTML = tickets.map(t => `
+            <div class="ticket-admin-row ${t.redeemed ? 'redeemed' : ''}">
+                <div class="tar-main">
+                    <div class="tar-top">
+                        <span class="tar-code">${escapeHtml(t.ticket_code)}</span>
+                        <span class="tar-status ${t.redeemed ? 'ok' : 'pending'}">${t.redeemed ? 'Levantado' : 'Por levantar'}</span>
+                    </div>
+                    <div class="tar-name">${escapeHtml(t.name || 'Sem nome')}</div>
+                    <div class="tar-meta">
+                        <span>Emitido: ${formatDate(t.created_at)}</span>
+                        ${t.phone ? `<span>· Tel: ${escapeHtml(t.phone)}</span>` : ''}
+                        ${t.redeemed_at ? `<span>· Levantado: ${formatDate(t.redeemed_at)}</span>` : ''}
+                    </div>
+                </div>
+                <div class="tar-actions">
+                    ${t.redeemed
+                        ? `<button class="unredeem-btn" data-id="${t.id}" title="Reverter (marcar como não levantado)">Reverter</button>`
+                        : `<button class="redeem-btn" data-id="${t.id}">Marcar como levantado</button>`
+                    }
+                    <button class="delete-btn" data-id="${t.id}" title="Apagar ticket">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                    </button>
+                </div>
+            </div>
+        `).join('');
+
+        list.querySelectorAll('.redeem-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const id = parseInt(btn.dataset.id);
+                btn.disabled = true;
+                await redeemTicket(id);
+                await loadTickets();
+            });
+        });
+
+        list.querySelectorAll('.unredeem-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const id = parseInt(btn.dataset.id);
+                if (!confirm('Reverter este ticket para "por levantar"?')) return;
+                await unredeemTicket(id);
+                await loadTickets();
+            });
+        });
+
+        list.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const id = parseInt(btn.dataset.id);
+                if (!confirm('Apagar este ticket permanentemente?')) return;
+                await deleteTicket(id);
+                await loadTickets();
+            });
+        });
+    }
+
+    // Search tickets
+    const searchTickets = document.getElementById('searchTickets');
+    if (searchTickets) {
+        searchTickets.addEventListener('input', () => {
+            const q = searchTickets.value.trim().toLowerCase();
+            const filtered = q
+                ? ticketsCache.filter(t =>
+                    (t.ticket_code || '').toLowerCase().includes(q) ||
+                    (t.name || '').toLowerCase().includes(q))
+                : ticketsCache;
+            renderTicketsList(filtered);
+        });
+    }
+
+    // Validate ticket by code
+    const ticketValidateForm = document.getElementById('ticketValidateForm');
+    const ticketValidateInput = document.getElementById('ticketValidateInput');
+    const ticketValidateResult = document.getElementById('ticketValidateResult');
+
+    if (ticketValidateForm) {
+        ticketValidateForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const code = ticketValidateInput.value.trim().toUpperCase();
+            if (!code) return;
+
+            ticketValidateResult.style.display = 'block';
+            ticketValidateResult.className = 'ticket-validate-result loading';
+            ticketValidateResult.innerHTML = 'A verificar...';
+
+            const ticket = await getTicketByCode(code);
+
+            if (!ticket) {
+                ticketValidateResult.className = 'ticket-validate-result error';
+                ticketValidateResult.innerHTML = `
+                    <strong>Ticket inválido</strong>
+                    <p>Não existe nenhum ticket com o código <code>${escapeHtml(code)}</code>.</p>
+                `;
+                return;
+            }
+
+            if (ticket.redeemed) {
+                ticketValidateResult.className = 'ticket-validate-result warn';
+                ticketValidateResult.innerHTML = `
+                    <strong>Já foi levantado</strong>
+                    <p><b>${escapeHtml(ticket.name)}</b> já levantou o brinde em ${formatDate(ticket.redeemed_at)}.</p>
+                `;
+                return;
+            }
+
+            ticketValidateResult.className = 'ticket-validate-result ok';
+            ticketValidateResult.innerHTML = `
+                <strong>Ticket válido</strong>
+                <p>Titular: <b>${escapeHtml(ticket.name)}</b></p>
+                <p>Emitido em ${formatDate(ticket.created_at)}</p>
+                <button class="save-btn" id="validateRedeemBtn" style="margin-top:12px;">Marcar como levantado</button>
+            `;
+            document.getElementById('validateRedeemBtn').addEventListener('click', async (e) => {
+                e.currentTarget.disabled = true;
+                await redeemTicket(ticket.id);
+                ticketValidateResult.className = 'ticket-validate-result ok';
+                ticketValidateResult.innerHTML = `<strong>Levantado com sucesso!</strong><p>${escapeHtml(ticket.name)} · ${escapeHtml(ticket.ticket_code)}</p>`;
+                ticketValidateInput.value = '';
+                await loadTickets();
+                setTimeout(() => { ticketValidateResult.style.display = 'none'; }, 4000);
+            });
+        });
     }
 
     // ---- Brindes (Gift Selections) ----

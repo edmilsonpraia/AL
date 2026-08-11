@@ -189,3 +189,77 @@ async function clearAllData() {
     await sb.from('suggestions').delete().neq('id', 0);
     // Don't auto-delete media - too risky
 }
+
+// ---- Tickets (Brinde do Casamento) API ----
+// Table SQL:
+//   create table public.tickets (
+//       id bigserial primary key,
+//       ticket_code text unique not null,
+//       name text not null,
+//       phone text,
+//       redeemed boolean default false,
+//       redeemed_at timestamptz,
+//       created_at timestamptz default now()
+//   );
+//   alter table public.tickets enable row level security;
+//   create policy "public insert tickets" on public.tickets for insert with check (true);
+//   create policy "public read tickets" on public.tickets for select using (true);
+//   create policy "public update tickets" on public.tickets for update using (true);
+
+async function createTicket(data) {
+    const { data: inserted, error } = await sb.from('tickets').insert([{
+        ticket_code: data.ticket_code,
+        name: data.name,
+        phone: data.phone || null
+    }]).select().single();
+    if (error) {
+        console.error('Error creating ticket:', error);
+        return null;
+    }
+    return inserted;
+}
+
+async function getTicketByCode(code) {
+    const { data, error } = await sb.from('tickets')
+        .select('*')
+        .eq('ticket_code', code)
+        .maybeSingle();
+    if (error) {
+        console.error('Error fetching ticket:', error);
+        return null;
+    }
+    return data;
+}
+
+async function getTickets() {
+    const { data, error } = await sb.from('tickets')
+        .select('*')
+        .order('created_at', { ascending: false });
+    if (error) {
+        console.error('Error loading tickets:', error);
+        return [];
+    }
+    return data || [];
+}
+
+async function redeemTicket(id) {
+    const { error } = await sb.from('tickets')
+        .update({ redeemed: true, redeemed_at: new Date().toISOString() })
+        .eq('id', id);
+    if (error) console.error('Error redeeming ticket:', error);
+    return !error;
+}
+
+async function unredeemTicket(id) {
+    const { error } = await sb.from('tickets')
+        .update({ redeemed: false, redeemed_at: null })
+        .eq('id', id);
+    if (error) console.error('Error un-redeeming ticket:', error);
+    return !error;
+}
+
+async function deleteTicket(id) {
+    const { error } = await sb.from('tickets').delete().eq('id', id);
+    if (error) console.error('Error deleting ticket:', error);
+    return !error;
+}

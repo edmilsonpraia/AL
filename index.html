@@ -36,6 +36,7 @@
             </button>
             <ul class="nav-links" id="navLinks">
                 <li><a href="#inicio">Início</a></li>
+                <li><a href="#ticket">O meu Ticket</a></li>
                 <li><a href="#galeria">Partilhar Fotos e Vídeos</a></li>
             </ul>
         </div>
@@ -60,11 +61,103 @@
                 <p>"Onde você for, irei; onde você ficar, ficarei."</p>
                 <span>Rute 1:16</span>
             </div>
-            <a href="#galeria" class="scroll-btn">
+            <a href="#ticket" class="scroll-btn">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                     <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
                 </svg>
             </a>
+        </div>
+    </section>
+
+    <!-- Ticket de Brinde -->
+    <section id="ticket" class="section ticket-section">
+        <div class="container ticket-container">
+            <div class="section-header reveal">
+                <span class="section-label">O seu</span>
+                <h2>Ticket de Brinde</h2>
+                <div class="ornament">
+                    <div class="ornament-line"></div>
+                    <svg class="ornament-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20 12a2 2 0 012-2V6a2 2 0 00-2-2H4a2 2 0 00-2 2v4a2 2 0 010 4v4a2 2 0 002 2h16a2 2 0 002-2v-4a2 2 0 01-2-2z"/>
+                    </svg>
+                    <div class="ornament-line"></div>
+                </div>
+            </div>
+            <p class="ticket-intro reveal">Gere aqui o seu ticket pessoal. Apresente-o no dia do casamento (impresso ou no telemóvel) para levantar o seu brinde de agradecimento.</p>
+
+            <div class="ticket-panel reveal">
+                <form class="ticket-form" id="ticketForm">
+                    <div class="ticket-input-group">
+                        <label for="ticketName">O seu nome completo</label>
+                        <input type="text" id="ticketName" placeholder="Ex: Maria dos Santos" required autocomplete="name" maxlength="80">
+                    </div>
+                    <div class="ticket-input-group">
+                        <label for="ticketPhone">Telefone (opcional)</label>
+                        <input type="tel" id="ticketPhone" placeholder="+244 ..." autocomplete="tel" maxlength="30">
+                    </div>
+                    <button type="submit" class="ticket-generate-btn" id="ticketGenerateBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 12a2 2 0 012-2V6a2 2 0 00-2-2H4a2 2 0 00-2 2v4a2 2 0 010 4v4a2 2 0 002 2h16a2 2 0 002-2v-4a2 2 0 01-2-2z"/>
+                            <line x1="13" y1="5" x2="13" y2="7"/><line x1="13" y1="11" x2="13" y2="13"/><line x1="13" y1="17" x2="13" y2="19"/>
+                        </svg>
+                        <span>Gerar Ticket</span>
+                    </button>
+                    <p class="ticket-form-note">Um ticket por pessoa. Guarde-o com cuidado.</p>
+                </form>
+
+                <div class="ticket-result" id="ticketResult" style="display:none;">
+                    <div class="ticket-card" id="ticketCard">
+                        <div class="ticket-card-header">
+                            <div class="ticket-card-brand">L &amp; A</div>
+                            <div class="ticket-card-event">Casamento &middot; 15 Agosto 2026</div>
+                        </div>
+                        <div class="ticket-card-body">
+                            <div class="ticket-qr" id="ticketQr"></div>
+                            <div class="ticket-info">
+                                <div class="ticket-info-row">
+                                    <span class="ticket-info-label">Titular</span>
+                                    <strong id="ticketDisplayName">—</strong>
+                                </div>
+                                <div class="ticket-info-row">
+                                    <span class="ticket-info-label">Código</span>
+                                    <strong class="ticket-code" id="ticketDisplayCode">—</strong>
+                                </div>
+                                <div class="ticket-info-row">
+                                    <span class="ticket-info-label">Emitido em</span>
+                                    <span id="ticketDisplayDate">—</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ticket-card-footer">
+                            <div class="ticket-perforation"></div>
+                            <p>Apresente este ticket no evento para levantar o seu brinde</p>
+                        </div>
+                    </div>
+
+                    <div class="ticket-actions">
+                        <button class="ticket-action-btn" id="ticketShareBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                            </svg>
+                            Partilhar
+                        </button>
+                        <button class="ticket-action-btn" id="ticketDownloadBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                            </svg>
+                            Guardar Imagem
+                        </button>
+                        <button class="ticket-action-btn ghost" id="ticketNewBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+                            </svg>
+                            Gerar outro
+                        </button>
+                    </div>
+                    <p class="ticket-saved-hint">Este ticket também foi guardado no seu telemóvel — volte a esta página em qualquer altura para o ver.</p>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -181,6 +274,7 @@
             <button class="quick-reply-btn" data-msg="Onde vai ser o casamento?">Onde?</button>
             <button class="quick-reply-btn" data-msg="A que horas começa?">Hora?</button>
             <button class="quick-reply-btn" data-msg="Qual o dresscode?">Dresscode</button>
+            <button class="quick-reply-btn" data-msg="Como levanto o meu ticket de brinde?">Ticket de Brinde</button>
             <button class="quick-reply-btn" data-msg="Como partilho fotos e vídeos?">Partilhar Fotos</button>
             <button class="quick-reply-btn" data-msg="Como instalar a app?">Instalar App</button>
         </div>
@@ -229,6 +323,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <script src="supabase-config.js"></script>
     <script src="script.js"></script>
 </body>

@@ -61,6 +61,10 @@
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>
                     Brindes
                 </button>
+                <button class="nav-item" data-tab="tickets">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12a2 2 0 012-2V6a2 2 0 00-2-2H4a2 2 0 00-2 2v4a2 2 0 010 4v4a2 2 0 002 2h16a2 2 0 002-2v-4a2 2 0 01-2-2z"/><line x1="13" y1="5" x2="13" y2="7"/><line x1="13" y1="11" x2="13" y2="13"/><line x1="13" y1="17" x2="13" y2="19"/></svg>
+                    Tickets
+                </button>
                 <button class="nav-item" data-tab="galeria">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                     Galeria
@@ -406,6 +410,64 @@
                     </div>
                     <div class="brindes-list" id="brindesAdminList">
                         <p class="empty-state" style="padding:20px;">Sem ofertas registadas.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tickets Tab -->
+            <div class="tab-content" id="tab-tickets">
+                <div class="page-header">
+                    <h2>Tickets de Brinde</h2>
+                    <p>Validação de tickets no dia do casamento</p>
+                </div>
+
+                <div class="suggestions-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon total">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12a2 2 0 012-2V6a2 2 0 00-2-2H4a2 2 0 00-2 2v4a2 2 0 010 4v4a2 2 0 002 2h16a2 2 0 002-2v-4a2 2 0 01-2-2z"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-number" id="statTickets">0</span>
+                            <span class="stat-label">Tickets emitidos</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon confirmed">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-number" id="statTicketsRedeemed">0</span>
+                            <span class="stat-label">Já levantados</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon countdown">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-number" id="statTicketsPending">0</span>
+                            <span class="stat-label">Por levantar</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ticket-validate-box">
+                    <h3>Validar por código</h3>
+                    <p>Introduza o código do ticket (ex: LA-A7X9K2) ou peça ao convidado para mostrar o QR.</p>
+                    <form class="ticket-validate-form" id="ticketValidateForm">
+                        <input type="text" id="ticketValidateInput" placeholder="LA-XXXXXX" autocomplete="off" maxlength="20" style="text-transform:uppercase;">
+                        <button type="submit" class="save-btn">Validar</button>
+                    </form>
+                    <div class="ticket-validate-result" id="ticketValidateResult" style="display:none;"></div>
+                </div>
+
+                <div class="menu-category" style="margin-top:24px; border: 1px solid rgba(164,119,100,0.15);">
+                    <div class="category-header">
+                        <h3>Todos os tickets</h3>
+                        <input type="text" class="search-input" id="searchTickets" placeholder="Pesquisar por nome ou código..." style="max-width:280px;">
+                    </div>
+                    <div class="tickets-list" id="ticketsAdminList">
+                        <p class="empty-state" style="padding:20px;">Ainda ninguém gerou um ticket.</p>
                     </div>
                 </div>
             </div>
